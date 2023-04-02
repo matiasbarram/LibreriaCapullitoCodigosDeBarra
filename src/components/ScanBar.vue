@@ -12,8 +12,6 @@ const emit = defineEmits(['emitData'])
 const loading = ref(true)
 const videoConstraints = {
   video: {
-    width: { ideal: 1280 },
-    height: { ideal: 720 },
     facingMode: 'user',
     advanced: [
       {
