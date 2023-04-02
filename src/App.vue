@@ -1,8 +1,8 @@
 <template>
   <AppHeader />
   <section class="main-section">
-    <ScanBar class="scanner" v-show="showModal == false" @emitData="loadData" />
     <Modal v-if="showModal" :visible="showModal" @close="showModal = false" :codigo="barCodeData" />
+    <ScanBar v-else class="scanner" @emitData="loadData" />
     <h1 class="main-section-title">Escanea tu producto para saber detalles</h1>
   </section>
 </template>
