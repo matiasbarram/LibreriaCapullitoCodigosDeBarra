@@ -44,9 +44,9 @@ onClickOutside(target, (event) => closeModal())
 
 const fetchDataFromApi = async () => {
     try {
-        const response = await fetch('https://reqres.in/api/users?page=2');
-        const data = await response.json();
-        dataFromApi.value = data;
+        //const response = await fetch('https://reqres.in/api/users?page=2');
+        //const data = await response.json();
+        dataFromApi.value = { "test": "Esta es una prueba porque escanea muy rapido " };
     } catch (error) {
         console.error(error);
     }

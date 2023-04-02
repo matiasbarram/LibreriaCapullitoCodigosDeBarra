@@ -51,6 +51,7 @@ const detecting = () => {
     console.log(data);
     const foundResult = data[0];
     const barcode = foundResult.codeResult.code
+    Quagga.stop();
     console.log("Found: " + barcode)
     emit("emitData", barcode);
   });
