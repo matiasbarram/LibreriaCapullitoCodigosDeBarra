@@ -6,7 +6,9 @@
     <h1 class="main-section-title">Escanea tu producto para saber detalles</h1>
   </section>
   <button @click="getCameras">Test</button>
-  <h2>{{ cameras }}</h2>
+  <div>
+    <p v-for="camera in cameras">{{ camera.kind }} | {{ camera.label }}</p>
+  </div>
 </template>
 
 <script setup>
