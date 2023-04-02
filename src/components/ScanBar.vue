@@ -18,10 +18,10 @@ const loading = ref(true)
 const selectedCamera = ref("")
 const debug = ref([])
 
-const onChange = () => {
+const onChange = async () => {
   console.log('The new value is: ', selectedCamera.value)
   Quagga.stop()
-  start({
+  await start({
     width: { min: 640 },
     height: { min: 480 },
     facingMode: "environment",
@@ -30,28 +30,52 @@ const onChange = () => {
   })
 }
 
-const selectDefaultCamera = () => {
-  const activeStreamLabel = Quagga.CameraAccess.getActiveStreamLabel();
-  console.log("Camara activa: " + activeStreamLabel)
-  Quagga.CameraAccess.enumerateVideoDevices().then(function (devices) {
-    devices.forEach(function (device) {
-      console.log("Camera: " + device.label)
-      if (device.label === activeStreamLabel) {
-        let defaultDeviceId = device.deviceId;
-        selectedCamera.value = defaultDeviceId
-        console.log("El deviceId por defecto es:", defaultDeviceId);
-      }
-    });
-  })
+
+function pruneText(text) {
+  return text.length > 30 ? text.substr(0, 30) : text;
 }
 
+const initCameraSelector = (devices) => {
+
+  var $deviceSelection = document.getElementById("deviceSelection");
+  while ($deviceSelection.firstChild) {
+    $deviceSelection.removeChild($deviceSelection.firstChild);
+  }
+  devices.forEach(function (device) {
+    debug.value.push({ "label": device.label, "id": device.deviceId })
+    var $option = document.createElement("option");
+    $option.value = device.deviceId || device.id;
+    $option.appendChild(document.createTextNode(pruneText(device.label || device.deviceId || device.id)));
+    selectedCamera.value = device.deviceId;
+    $deviceSelection.appendChild($option);
+  });
+}
+
+const getDefaultCamera = async () => {
+  console.log("dsfds")
+  var defaultDeviceId = null
+  // Si es android seleccionamos la camara camera2 0 por defecto
+  const devices = await Quagga.CameraAccess.enumerateVideoDevices();
+  initCameraSelector(devices)
+  devices.forEach(function (device) {
+    console.log("test getDefaultCamera: " + device.label)
+    if (device.label == "camera2 0") {
+      console.log("Cambiando camara por defecto" + device.deviceId)
+      defaultDeviceId = device.deviceId
+    }
+  });
+  return defaultDeviceId
+}
+
+
 onMounted(async () => {
-  await initCameraSelector()
-  await start({
+  const defaultDeviceId = await getDefaultCamera()
+  start({
     width: { min: 640 },
     height: { min: 480 },
     facingMode: "environment",
-    aspectRatio: { min: 1, max: 2 }
+    aspectRatio: { min: 1, max: 2 },
+    deviceId: defaultDeviceId
   })
   detecting()
 
@@ -89,17 +113,15 @@ const start = async (constraints) => {
     }
   };
 
-  Quagga.init(config, err => {
+  await Quagga.init(config, err => {
     if (err) {
       console.log(err);
       return;
     }
     console.log("initialization complete");
     loading.value = false
-    Quagga.start();
-    if (selectedCamera.value == "") {
-      selectDefaultCamera()
-    }
+    Quagga.start()
+
 
   });
 
@@ -114,29 +136,6 @@ const detecting = () => {
     console.log("Found: " + barcode)
     emit("emitData", barcode);
   });
-}
-
-const initCameraSelector = async () => {
-  var streamLabel = Quagga.CameraAccess.getActiveStreamLabel();
-
-  return Quagga.CameraAccess.enumerateVideoDevices()
-    .then(function (devices) {
-      function pruneText(text) {
-        return text.length > 30 ? text.substr(0, 30) : text;
-      }
-      var $deviceSelection = document.getElementById("deviceSelection");
-      while ($deviceSelection.firstChild) {
-        $deviceSelection.removeChild($deviceSelection.firstChild);
-      }
-      devices.forEach(function (device) {
-        debug.value.push({ "label": device.label, "id": device.deviceId })
-        var $option = document.createElement("option");
-        $option.value = device.deviceId || device.id;
-        $option.appendChild(document.createTextNode(pruneText(device.label || device.deviceId || device.id)));
-        $option.selected = streamLabel === device.label;
-        $deviceSelection.appendChild($option);
-      });
-    });
 }
 
 </script>
