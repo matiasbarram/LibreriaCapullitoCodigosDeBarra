@@ -2,7 +2,7 @@
   <Loader v-if="loading" />
   <div v-show="!loading">
     <div id="videoWindow" class="video"></div>
-    <select name="input-stream_constraints" id="deviceSelection">
+    <select name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera" @change="onChange()">
     </select>
   </div>
 </template>
@@ -14,45 +14,41 @@ import Quagga from '@ericblade/quagga2'; // ES6
 
 const emit = defineEmits(['emitData'])
 const loading = ref(true)
+const selectedCamera = ref("")
 
-const constraints = {
-  video: {
-    facingMode: { ideal: 'environment' },
-  }
-};
+const onChange = () => {
+  console.log('The new value is: ', selectedCamera.value)
+  Quagga.stop()
+  start({
+    width: { min: 640 },
+    height: { min: 480 },
+    facingMode: "environment",
+    aspectRatio: { min: 1, max: 2 },
+    deviceId: selectedCamera.value
+  })
+}
 
 onMounted(() => {
   initCameraSelection()
-  start()
+  start({
+    width: { min: 640 },
+    height: { min: 480 },
+    facingMode: "environment",
+    aspectRatio: { min: 1, max: 2 }
+  })
   detecting()
 
 })
 
-// inputStream: {
-//       name: "live",
-//       type: "LiveStream",
-//       target: document.querySelector("#videoWindow"),
-//       constraints: {
-//         width: 640,
-//         height: 1281,
-//         facingMode: "environment",
 
-//       },
-//     },
 
-const start = async () => {
+const start = async (constraints) => {
   const config = {
     locate: true,
     inputStream: {
       type: "LiveStream",
       target: document.querySelector("#videoWindow"),
-
-      constraints: {
-        width: { min: 640 },
-        height: { min: 480 },
-        facingMode: "environment",
-        aspectRatio: { min: 1, max: 2 }
-      }
+      constraints: constraints
     },
     locator: {
       patchSize: "medium",
