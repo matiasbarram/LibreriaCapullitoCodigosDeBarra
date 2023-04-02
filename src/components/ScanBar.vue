@@ -20,7 +20,10 @@ const debug = ref([])
 
 const onChange = async () => {
   console.log('The new value is: ', selectedCamera.value)
-  Quagga.stop()
+  // Cambiar la cámara actual
+  Quagga.CameraAccess.getActiveStream().getTracks().forEach(function (track) {
+    track.stop();
+  });
   await start({
     width: { min: 640 },
     height: { min: 480 },
