@@ -21,14 +21,8 @@ const debug = ref([])
 const onChange = async () => {
   console.log('The new value is: ', selectedCamera.value)
   // Cambiar la cámara actual
-  Quagga.CameraAccess.getActiveStream().getTracks().forEach(function (track) {
-    track.stop();
-  });
+  await Quagga.stop()
   await start({
-    width: { min: 640 },
-    height: { min: 480 },
-    facingMode: "environment",
-    aspectRatio: { min: 1, max: 2 },
     deviceId: selectedCamera.value
   })
 }
@@ -74,10 +68,6 @@ const getDefaultCamera = async () => {
 onMounted(async () => {
   const defaultDeviceId = await getDefaultCamera()
   start({
-    width: { min: 640 },
-    height: { min: 480 },
-    facingMode: "environment",
-    aspectRatio: { min: 1, max: 2 },
     deviceId: defaultDeviceId
   })
   detecting()
