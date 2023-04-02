@@ -5,10 +5,6 @@
     <ScanBar v-else class="scanner" @emitData="loadData" />
     <h1 class="main-section-title">Escanea tu producto para saber detalles</h1>
   </section>
-  <button @click="getCameras">Test</button>
-  <div>
-    <p v-for="camera in cameras">{{ camera.kind }} | {{ camera.label }}</p>
-  </div>
 </template>
 
 <script setup>
@@ -21,32 +17,6 @@ const showModal = ref(false);
 const barCodeData = ref("")
 const cameras = ref([])
 
-const constraints = {
-  video: {
-    width: {
-      min: 1280,
-      ideal: 1920,
-      max: 2560,
-    },
-    height: {
-      min: 720,
-      ideal: 1080,
-      max: 1440
-    },
-  }
-};
-
-const getCameras = async () => {
-  const raw = await navigator.mediaDevices.enumerateDevices()
-  raw.forEach(device => {
-    const temp = { "kind": device.kind, "label": device.label }
-    cameras.value.push(temp)
-  });
-
-}
-
-onMounted(() => {
-})
 
 const loadData = (scannedBarCode) => {
   showModal.value = true

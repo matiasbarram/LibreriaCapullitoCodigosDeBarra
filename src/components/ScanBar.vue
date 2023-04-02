@@ -11,6 +11,11 @@ import Quagga from '@ericblade/quagga2'; // ES6
 const emit = defineEmits(['emitData'])
 const loading = ref(true)
 
+const constraints = {
+  video: {
+    facingMode: { ideal: 'environment' },
+  }
+};
 
 onMounted(() => {
   start()
@@ -19,7 +24,7 @@ onMounted(() => {
 })
 
 
-const start = () => {
+const start = async () => {
   const config = {
     locate: true,
     inputStream: {
@@ -46,6 +51,12 @@ const start = () => {
     loading.value = false
     Quagga.start();
   });
+
+  const stream = await navigator.mediaDevices.getUserMedia(constraints)
+  console.log(stream)
+  const video = document.querySelector('video');
+  video.srcObject = stream;
+  video.play();
 }
 
 const detecting = () => {
