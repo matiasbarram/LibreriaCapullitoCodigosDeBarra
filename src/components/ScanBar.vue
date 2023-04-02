@@ -3,12 +3,9 @@
   <div v-show="!loading">
     <div id="videoWindow" class="video"></div>
     <div class="select-wrapper" :class="{ open: isOpen, selected: selectedValue }">
-      <select name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera" @change="onChange()"
-        @blur="isOpen = false" @keydown.enter="isOpen = false">
+      <select v-show="!selectedCamera" name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera"
+        @change="onChange()" @blur="isOpen = false" @keydown.enter="isOpen = false">
       </select>
-      <svg class="arrow" viewBox="0 0 24 24">
-        <path d="M7.41,8.59L12,13.17l4.59-4.58L18,10l-6,6l-6-6L7.41,8.59z" />
-      </svg>
     </div>
   </div>
 </template>
@@ -22,11 +19,7 @@ import { computed } from "@vue/reactivity";
 const emit = defineEmits(['emitData'])
 const loading = ref(true)
 const selectedCamera = ref("")
-const debug = ref([])
 
-const arrowPath = computed(() =>
-  isOpen.value ? 'M7.41,8.59L12,13.17l4.59-4.58L18,10l-6,6l-6-6L7.41,8.59z' : 'M7.41,15.41L12,10.83l4.59,4.58L18,15l-6-6l-6,6L7.41,15.41z'
-);
 
 const onChange = async () => {
   console.log('The new value is: ', selectedCamera.value)
@@ -50,7 +43,6 @@ const initCameraSelector = (devices) => {
     $deviceSelection.removeChild($deviceSelection.firstChild);
   }
   devices.forEach(function (device) {
-    debug.value.push({ "label": device.label, "id": device.deviceId })
     var $option = document.createElement("option");
     $option.value = device.deviceId || device.id;
     $option.appendChild(document.createTextNode(pruneText(device.label || device.deviceId || device.id)));
@@ -58,24 +50,28 @@ const initCameraSelector = (devices) => {
   });
 }
 
-const AndroidDefaultCamera = async () => {
+const DeviceDefaultCamera = async () => {
   var defaultDeviceId = null
   // Si es android seleccionamos la camara camera2 0 por defecto
   const devices = await Quagga.CameraAccess.enumerateVideoDevices();
   devices.forEach(function (device) {
     console.log("test getDefaultCamera: " + device.label)
-    if (device.label.includes("camera2 0")) {
-      console.log("Cambiando camara por defecto" + device.deviceId)
-      defaultDeviceId = device.deviceId
+    if (navigator.userAgent.match(/Android/i)) {
+      if (device.label.includes("camera2 0")) {
+        console.log("Cambiando camara por defecto" + device.deviceId)
+        defaultDeviceId = device.deviceId
+      }
     }
   });
-  initCameraSelector(devices)
+  if (!navigator.userAgent.match(/Iphone/i)) {
+    initCameraSelector(devices)
+  }
   return defaultDeviceId
 }
 
 
 onMounted(async () => {
-  const defaultDeviceId = await AndroidDefaultCamera()
+  const defaultDeviceId = await DeviceDefaultCamera()
   const constraints = defaultDeviceId ? { deviceId: defaultDeviceId } : {}
   await start(constraints)
   detecting()
@@ -133,7 +129,9 @@ const start = async (constraints) => {
     console.log("initialization complete");
     loading.value = false
     Quagga.start()
-    selectDefaultCamera()
+    if (!navigator.userAgent.match(/Iphone/i)) {
+      selectDefaultCamera()
+    }
 
 
   })
@@ -157,10 +155,6 @@ canvas.drawingBuffer {
   display: none !important;
 }
 
-.debug {
-  overflow: scroll
-}
-
 .select-wrapper {
   position: relative;
   width: 200px;
@@ -179,21 +173,5 @@ select {
   border: 1px solid #ccc;
   background-color: #fff;
   cursor: pointer;
-}
-
-.arrow {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  fill: #999;
-  transition: transform 0.3s ease-in-out;
-  cursor: pointer;
-}
-
-.select-wrapper.open .arrow {
-  transform: translateY(-50%) rotate(180deg);
 }
 </style>
