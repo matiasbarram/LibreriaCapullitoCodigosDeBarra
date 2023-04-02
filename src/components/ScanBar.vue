@@ -55,7 +55,7 @@ const AndroidDefaultCamera = async () => {
   const devices = await Quagga.CameraAccess.enumerateVideoDevices();
   devices.forEach(function (device) {
     console.log("test getDefaultCamera: " + device.label)
-    if (device.label.includes("camera2 1")) {
+    if (device.label.includes("camera2 0")) {
       console.log("Cambiando camara por defecto" + device.deviceId)
       defaultDeviceId = device.deviceId
     }
