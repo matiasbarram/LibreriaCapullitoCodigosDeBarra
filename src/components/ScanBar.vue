@@ -28,9 +28,23 @@ const onChange = () => {
   })
 }
 
-onMounted(() => {
-  initCameraSelection()
-  start({
+const selectDefaultCamera = () => {
+  const activeStreamLabel = Quagga.CameraAccess.getActiveStreamLabel();
+  console.log("Camara activa: " + activeStreamLabel)
+  Quagga.CameraAccess.enumerateVideoDevices().then(function (devices) {
+    devices.forEach(function (device) {
+      if (device.label === activeStreamLabel) {
+        let defaultDeviceId = device.deviceId;
+        selectedCamera.value = defaultDeviceId
+        console.log("El deviceId por defecto es:", defaultDeviceId);
+      }
+    });
+  })
+}
+
+onMounted(async () => {
+  await initCameraSelector()
+  await start({
     width: { min: 640 },
     height: { min: 480 },
     facingMode: "environment",
@@ -80,6 +94,10 @@ const start = async (constraints) => {
     console.log("initialization complete");
     loading.value = false
     Quagga.start();
+    if (selectedCamera.value == "") {
+      selectDefaultCamera()
+    }
+
   });
 
 }
@@ -95,7 +113,7 @@ const detecting = () => {
   });
 }
 
-const initCameraSelection = async () => {
+const initCameraSelector = async () => {
   var streamLabel = Quagga.CameraAccess.getActiveStreamLabel();
 
   return Quagga.CameraAccess.enumerateVideoDevices()
