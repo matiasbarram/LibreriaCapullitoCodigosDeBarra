@@ -56,7 +56,7 @@ const getDefaultCamera = async () => {
   initCameraSelector(devices)
   devices.forEach(function (device) {
     console.log("test getDefaultCamera: " + device.label)
-    if (device.label == "camera2 0") {
+    if (device.label.includes("camera2 1")) {
       console.log("Cambiando camara por defecto" + device.deviceId)
       defaultDeviceId = device.deviceId
     }
