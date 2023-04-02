@@ -36,7 +36,6 @@ const selectDefaultCamera = () => {
   Quagga.CameraAccess.enumerateVideoDevices().then(function (devices) {
     devices.forEach(function (device) {
       console.log("Camera: " + device.label)
-      debug.value.push({ "label": device.deviceId, "device": device.groupId })
       if (device.label === activeStreamLabel) {
         let defaultDeviceId = device.deviceId;
         selectedCamera.value = defaultDeviceId
@@ -130,6 +129,7 @@ const initCameraSelector = async () => {
         $deviceSelection.removeChild($deviceSelection.firstChild);
       }
       devices.forEach(function (device) {
+        debug.value.push({ "label": device.label, "id": device.deviceId })
         var $option = document.createElement("option");
         $option.value = device.deviceId || device.id;
         $option.appendChild(document.createTextNode(pruneText(device.label || device.deviceId || device.id)));
