@@ -3,7 +3,7 @@
   <div v-show="!loading">
     <div id="videoWindow" class="video"></div>
     <div class="select-wrapper" :class="{ open: isOpen, selected: selectedValue }">
-      <select v-show="!selectedCamera" name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera"
+      <select v-show="selectedCamera" name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera"
         @change="onChange()" @blur="isOpen = false" @keydown.enter="isOpen = false">
       </select>
     </div>
@@ -14,7 +14,6 @@
 import { onMounted, ref } from "vue";
 import Loader from "./Loader.vue"
 import Quagga from '@ericblade/quagga2';
-import { computed } from "@vue/reactivity";
 
 const emit = defineEmits(['emitData'])
 const loading = ref(true)
@@ -37,7 +36,6 @@ function pruneText(text) {
 }
 
 const initCameraSelector = (devices) => {
-
   var $deviceSelection = document.getElementById("deviceSelection");
   while ($deviceSelection.firstChild) {
     $deviceSelection.removeChild($deviceSelection.firstChild);
@@ -63,7 +61,7 @@ const DeviceDefaultCamera = async () => {
       }
     }
   });
-  if (!navigator.userAgent.match(/Iphone/i)) {
+  if (navigator.userAgent.match(/Android/i)) {
     initCameraSelector(devices)
   }
   return defaultDeviceId
@@ -71,11 +69,10 @@ const DeviceDefaultCamera = async () => {
 
 
 onMounted(async () => {
-  const defaultDeviceId = await DeviceDefaultCamera()
+  const defaultDeviceId = navigator.userAgent.match(/Android/i) ? await DeviceDefaultCamera() : null
   const constraints = defaultDeviceId ? { deviceId: defaultDeviceId } : {}
   await start(constraints)
   detecting()
-
 })
 
 const selectDefaultCamera = async () => {
@@ -129,7 +126,7 @@ const start = async (constraints) => {
     console.log("initialization complete");
     loading.value = false
     Quagga.start()
-    if (!navigator.userAgent.match(/Iphone/i)) {
+    if (navigator.userAgent.match(/Android/i)) {
       selectDefaultCamera()
     }
 
