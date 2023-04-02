@@ -53,7 +53,6 @@ const getDefaultCamera = async () => {
   var defaultDeviceId = null
   // Si es android seleccionamos la camara camera2 0 por defecto
   const devices = await Quagga.CameraAccess.enumerateVideoDevices();
-  initCameraSelector(devices)
   devices.forEach(function (device) {
     console.log("test getDefaultCamera: " + device.label)
     if (device.label.includes("camera2 1")) {
@@ -61,15 +60,17 @@ const getDefaultCamera = async () => {
       defaultDeviceId = device.deviceId
     }
   });
+  initCameraSelector(devices)
   return defaultDeviceId
 }
 
 
 onMounted(async () => {
   const defaultDeviceId = await getDefaultCamera()
-  start({
+  await start({
     deviceId: defaultDeviceId
   })
+
   detecting()
 
 })
