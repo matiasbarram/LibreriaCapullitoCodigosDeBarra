@@ -10,26 +10,11 @@ import Quagga from '@ericblade/quagga2'; // ES6
 
 const emit = defineEmits(['emitData'])
 const loading = ref(true)
-const videoConstraints = {
-  video: {
-    facingMode: 'user',
-  }
-};
 
 
 onMounted(() => {
   start()
   detecting()
-
-  navigator.mediaDevices.getUserMedia(videoConstraints)
-    .then(function (mediaStream) {
-      const video = document.querySelector('video');
-      video.srcObject = mediaStream;
-      video.onloadedmetadata = function (e) {
-        video.play();
-      };
-    })
-    .catch(function (err) { console.log(err.name + ": " + err.message); });
 
 })
 
