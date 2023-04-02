@@ -4,7 +4,9 @@
     <div id="videoWindow" class="video"></div>
     <select name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera" @change="onChange()">
     </select>
+    <div>Selected {{ selectedCamera }}</div>
     <div class="debug">{{ debug }}</div>
+    <button @click="selectDefaultCamera">Test</button>
   </div>
 </template>
 
@@ -20,7 +22,6 @@ const debug = ref([])
 
 const onChange = async () => {
   console.log('The new value is: ', selectedCamera.value)
-  // Cambiar la cámara actual
   await Quagga.stop()
   await start({
     deviceId: selectedCamera.value
@@ -43,12 +44,11 @@ const initCameraSelector = (devices) => {
     var $option = document.createElement("option");
     $option.value = device.deviceId || device.id;
     $option.appendChild(document.createTextNode(pruneText(device.label || device.deviceId || device.id)));
-    selectedCamera.value = device.deviceId;
     $deviceSelection.appendChild($option);
   });
 }
 
-const getDefaultCamera = async () => {
+const AndroidDefaultCamera = async () => {
   console.log("dsfds")
   var defaultDeviceId = null
   // Si es android seleccionamos la camara camera2 0 por defecto
@@ -66,16 +66,25 @@ const getDefaultCamera = async () => {
 
 
 onMounted(async () => {
-  const defaultDeviceId = await getDefaultCamera()
-  await start({
-    deviceId: defaultDeviceId
-  })
-
+  const defaultDeviceId = await AndroidDefaultCamera()
+  const constraints = defaultDeviceId ? { deviceId: defaultDeviceId } : {}
+  await start(constraints)
   detecting()
 
 })
 
-
+const selectDefaultCamera = async () => {
+  const activeStreamLabel = Quagga.CameraAccess.getActiveStreamLabel();
+  console.log("Camara activa: " + activeStreamLabel)
+  const devices = await Quagga.CameraAccess.enumerateVideoDevices()
+  devices.forEach(function (device) {
+    if (device.label === activeStreamLabel) {
+      let defaultDeviceId = device.deviceId;
+      selectedCamera.value = defaultDeviceId
+      console.log("El deviceId por defecto es:", defaultDeviceId);
+    }
+  });
+}
 
 const start = async (constraints) => {
   const config = {
@@ -115,10 +124,10 @@ const start = async (constraints) => {
     console.log("initialization complete");
     loading.value = false
     Quagga.start()
+    selectDefaultCamera()
 
 
-  });
-
+  })
 }
 
 const detecting = () => {
