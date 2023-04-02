@@ -30,7 +30,13 @@ const start = async () => {
     inputStream: {
       name: "live",
       type: "LiveStream",
-      target: document.querySelector("#videoWindow")
+      target: document.querySelector("#videoWindow"),
+      constraints: {
+        width: 640,
+        height: 1281,
+        facingMode: "environment",
+
+      },
     },
     decoder: {
       readers: ["ean_reader"],
