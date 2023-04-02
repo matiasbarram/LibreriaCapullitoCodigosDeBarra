@@ -4,6 +4,7 @@
     <div id="videoWindow" class="video"></div>
     <select name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera" @change="onChange()">
     </select>
+    <div class="debug">{{ debug }}</div>
   </div>
 </template>
 
@@ -15,6 +16,7 @@ import Quagga from '@ericblade/quagga2'; // ES6
 const emit = defineEmits(['emitData'])
 const loading = ref(true)
 const selectedCamera = ref("")
+const debug = ref([])
 
 const onChange = () => {
   console.log('The new value is: ', selectedCamera.value)
@@ -33,6 +35,8 @@ const selectDefaultCamera = () => {
   console.log("Camara activa: " + activeStreamLabel)
   Quagga.CameraAccess.enumerateVideoDevices().then(function (devices) {
     devices.forEach(function (device) {
+      console.log("Camera: " + device.label)
+      debug.value.push({ "label": device.deviceId, "device": device.groupId })
       if (device.label === activeStreamLabel) {
         let defaultDeviceId = device.deviceId;
         selectedCamera.value = defaultDeviceId
@@ -150,5 +154,9 @@ select {
   background-color: #fff;
   color: #333;
   margin: 20px 0;
+}
+
+.debug {
+  overflow: scroll
 }
 </style>
