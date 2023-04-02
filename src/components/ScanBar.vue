@@ -13,11 +13,6 @@ const loading = ref(true)
 const videoConstraints = {
   video: {
     facingMode: 'user',
-    advanced: [
-      {
-        zoom: 1
-      }
-    ]
   }
 };
 
