@@ -2,30 +2,40 @@
   <Loader v-if="loading" />
   <div v-show="!loading">
     <div id="videoWindow" class="video"></div>
-    <select name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera" @change="onChange()">
-    </select>
-    <div>Selected {{ selectedCamera }}</div>
-    <div class="debug">{{ debug }}</div>
-    <button @click="selectDefaultCamera">Test</button>
+    <div class="select-wrapper" :class="{ open: isOpen, selected: selectedValue }">
+      <select name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera" @change="onChange()"
+        @blur="isOpen = false" @keydown.enter="isOpen = false">
+      </select>
+      <svg class="arrow" viewBox="0 0 24 24">
+        <path d="M7.41,8.59L12,13.17l4.59-4.58L18,10l-6,6l-6-6L7.41,8.59z" />
+      </svg>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import Loader from "./Loader.vue"
-import Quagga from '@ericblade/quagga2'; // ES6
+import Quagga from '@ericblade/quagga2';
+import { computed } from "@vue/reactivity";
 
 const emit = defineEmits(['emitData'])
 const loading = ref(true)
 const selectedCamera = ref("")
 const debug = ref([])
 
+const arrowPath = computed(() =>
+  isOpen.value ? 'M7.41,8.59L12,13.17l4.59-4.58L18,10l-6,6l-6-6L7.41,8.59z' : 'M7.41,15.41L12,10.83l4.59,4.58L18,15l-6-6l-6,6L7.41,15.41z'
+);
+
 const onChange = async () => {
   console.log('The new value is: ', selectedCamera.value)
   await Quagga.stop()
+  loading.value = true
   await start({
     deviceId: selectedCamera.value
   })
+  loading.value = false
 }
 
 
@@ -49,7 +59,6 @@ const initCameraSelector = (devices) => {
 }
 
 const AndroidDefaultCamera = async () => {
-  console.log("dsfds")
   var defaultDeviceId = null
   // Si es android seleccionamos la camara camera2 0 por defecto
   const devices = await Quagga.CameraAccess.enumerateVideoDevices();
@@ -148,17 +157,43 @@ canvas.drawingBuffer {
   display: none !important;
 }
 
-select {
-  padding: 8px;
-  font-size: 16px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  color: #333;
-  margin: 20px 0;
-}
-
 .debug {
   overflow: scroll
+}
+
+.select-wrapper {
+  position: relative;
+  width: 200px;
+  height: 40px;
+  margin: 20px;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  fill: #999;
+  transition: transform 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.select-wrapper.open .arrow {
+  transform: translateY(-50%) rotate(180deg);
 }
 </style>
