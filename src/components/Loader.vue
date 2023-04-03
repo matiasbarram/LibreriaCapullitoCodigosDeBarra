@@ -26,7 +26,7 @@
 
 .loader-circle {
     fill: none;
-    stroke: #1e90ff;
+    stroke: #17a2b8;
     stroke-width: 4;
     stroke-dasharray: 80px;
     stroke-dashoffset: 0px;
