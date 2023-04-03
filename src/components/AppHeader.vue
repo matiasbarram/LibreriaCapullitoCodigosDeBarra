@@ -157,7 +157,7 @@ function toggleMenu() {
   display: grid;
   grid-template-rows: 1fr auto;
   top: 0;
-  left: -200px;
+  left: -240px;
   z-index: 2;
   width: 240px;
   height: 100%;
