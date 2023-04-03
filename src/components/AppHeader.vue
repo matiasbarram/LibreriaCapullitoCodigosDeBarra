@@ -24,7 +24,7 @@
         </svg>
       </button>
       <ul>
-        <li><a class="menu-ancle" href="#">Nuestros productos</a></li>
+        <li><a class="menu-ancle" href="https://libreriacapullito.cl/">Nuestros productos</a></li>
       </ul>
     </div>
     <div class="footer-menu">
@@ -159,7 +159,7 @@ function toggleMenu() {
   top: 0;
   left: -200px;
   z-index: 2;
-  width: 200px;
+  width: 240px;
   height: 100%;
   padding: 20px;
   background-color: #fff;
