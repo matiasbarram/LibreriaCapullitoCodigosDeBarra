@@ -2,9 +2,12 @@
   <Loader v-if="loading" />
   <div v-show="!loading">
     <div id="videoWindow" class="video"></div>
-    <div class="select-wrapper" :class="{ open: isOpen, selected: selectedValue }">
-      <select v-show="selectedCamera" name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera"
-        @change="onChange()" @blur="isOpen = false" @keydown.enter="isOpen = false">
+    <div v-show="selectedCamera" style="margin:10px 0">
+      <div class="alert alert-light" role="alert">
+        Si tienes problemas intenta con otra cámara.
+      </div>
+      <select name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera" @change="onChange()"
+        @blur="isOpen = false" @keydown.enter="isOpen = false">
       </select>
     </div>
   </div>
@@ -152,13 +155,6 @@ canvas.drawingBuffer {
   display: none !important;
 }
 
-.select-wrapper {
-  position: relative;
-  width: 200px;
-  height: 40px;
-  margin: 20px;
-}
-
 select {
   appearance: none;
   -webkit-appearance: none;
@@ -170,5 +166,21 @@ select {
   border: 1px solid #ccc;
   background-color: #fff;
   cursor: pointer;
+}
+
+
+.alert {
+  position: relative;
+  text-align: left;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+
+.alert-light {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
 }
 </style>
