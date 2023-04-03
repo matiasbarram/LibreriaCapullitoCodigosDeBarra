@@ -4,7 +4,8 @@
     <div id="videoWindow" class="video"></div>
     <div v-show="selectedCamera" style="margin:10px 0">
       <div class="alert alert-light" role="alert">
-        Si tienes problemas intenta con otra cámara.
+        <span style="font-weight: 600;">¿Problemas al escanear?</span>
+        Intenta con otra cámara.
       </div>
       <select name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera" @change="onChange()"
         @blur="isOpen = false" @keydown.enter="isOpen = false">

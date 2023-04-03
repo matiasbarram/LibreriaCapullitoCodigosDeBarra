@@ -2,14 +2,13 @@
   <AppHeader />
   <section class="main-section">
     <Modal v-if="showModal" :visible="showModal" @close="showModal = false" :codigo="barCodeData" />
-    <ScanBar v-else class="scanner" @emitData="loadData" />
-    <h1 class="main-section-title">Escanea tu producto para saber detalles</h1>
+    <BarCodeScanner v-else class="scanner" @emitData="loadData" />
   </section>
 </template>
 
 <script setup>
 import AppHeader from './components/AppHeader.vue'
-import ScanBar from './components/ScanBar.vue'
+import BarCodeScanner from './components/BarCodeScanner.vue'
 import Modal from './components/Modal.vue'
 import { onMounted, ref, watch } from 'vue';
 
