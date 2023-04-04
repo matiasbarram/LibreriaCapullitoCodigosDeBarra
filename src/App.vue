@@ -1,8 +1,10 @@
 <template>
   <AppHeader />
   <section class="main-section">
-    <Modal v-if="showModal" :visible="showModal" @close="showModal = false" :codigo="barCodeData" />
-    <BarCodeScanner v-else class="scanner" @emitData="loadData" />
+    <Transition>
+      <Modal v-if="showModal" :visible="showModal" @close="showModal = false" :codigo="barCodeData" />
+    </Transition>
+    <BarCodeScanner v-if="showModal == false" class="scanner" @emitData="loadData" />
   </section>
 </template>
 
@@ -43,5 +45,16 @@ const loadData = (scannedBarCode) => {
   display: flex;
   justify-content: center;
   justify-items: center;
+}
+
+/* we will explain what these classes do next! */
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
