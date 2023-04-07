@@ -1,15 +1,17 @@
 <template>
   <Loader v-if="loading" />
   <div v-show="!loading">
+    <div v-show="isAndroid" style="margin:10px 0">
+      <select v-model="selectedCamera" @change="onChange()">
+        <option v-for="option in options" :value="option.value">{{ option.label }}</option>
+      </select>
+    </div>
     <div id="videoWindow" class="video"></div>
     <div v-show="isAndroid" style="margin:10px 0">
       <div class="alert alert-light" role="alert">
         <span style="font-weight: 600;">¿Problemas al escanear?</span>
         Intenta con otra cámara.
       </div>
-      <select v-model="selectedCamera" @change="onChange()">
-        <option v-for="option in options" :value="option.value">{{ option.label }}</option>
-      </select>
     </div>
   </div>
 </template>
