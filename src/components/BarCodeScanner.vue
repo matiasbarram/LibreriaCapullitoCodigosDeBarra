@@ -31,11 +31,11 @@ const options = ref([])
 const onChange = () => {
   const deviceId = selectedCamera.value
   const constraints = {
+    focusMode: "continuous",
     deviceId: {
       exact: deviceId
     }
   }
-  // save deviceId on localStorage
   localStorage.setItem("deviceId", deviceId)
   Quagga.stop();
   start(constraints)
@@ -45,7 +45,6 @@ const onChange = () => {
 onMounted(() => {
   start({
     focusMode: "continuous",
-    facingMode: "environment",
     deviceId: localStorage.getItem("deviceId")
   })
 })
@@ -60,19 +59,15 @@ const start = (constraints) => {
       constraints: constraints
     },
     locator: {
-      patchSize: "medium",
+      patchSize: "small",
       halfSample: true
     },
-    numOfWorkers: 2,
+    numOfWorkers: navigator.hardwareConcurrency,
     frequency: 10,
     decoder: {
       readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "code_39_vin_reader", "codabar_reader", "upc_reader", "upc_e_reader", "i2of5_reader"],
       multiple: true
     },
-    locator: {
-      halfSample: true,
-      patchSize: "medium"
-    }
   };
   Quagga.init(config, (err) => {
     if (err) {
@@ -83,6 +78,7 @@ const start = (constraints) => {
     Quagga.start();
     loading.value = false
     detecting()
+    checkCapabilities() // test
     if (selectedCamera.value == "") {
       if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/Windows/i)) {
         isAndroid.value = true
@@ -131,6 +127,18 @@ const detecting = () => {
     console.log("Found: " + barcode)
     emit("emitData", barcode);
   });
+}
+
+
+const checkCapabilities = () => {
+  var track = Quagga.CameraAccess.getActiveTrack();
+  var capabilities = {};
+  if (typeof track.getCapabilities === 'function') {
+    capabilities = track.getCapabilities();
+  }
+  if (!('zoom' in capabilities)) {
+    return Promise.reject('Zoom is not supported by ' + track.label);
+  }
 }
 
 </script>
