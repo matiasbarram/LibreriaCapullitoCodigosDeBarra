@@ -73,7 +73,6 @@ const DeviceDefaultCamera = async () => {
 
 
 onMounted(async () => {
-  console.log("Number of cores: " + navigator.hardwareConcurrency)
   const defaultDeviceId = navigator.userAgent.match(/Android/i) ? await DeviceDefaultCamera() : null
   const constraints = defaultDeviceId ? { deviceId: defaultDeviceId } : {}
   await start(constraints)
@@ -105,7 +104,7 @@ const start = async (constraints) => {
       patchSize: "medium",
       halfSample: true
     },
-    numOfWorkers: navigator.hardwareConcurrency,
+    numOfWorkers: 2,
     frequency: 10,
     decoder: {
       readers: [{
