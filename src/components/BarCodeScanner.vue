@@ -9,8 +9,7 @@
     <div id="videoWindow" class="video"></div>
     <div v-show="isAndroid" style="margin:10px 0">
       <input v-if="hasZoomCap" type="range" v-model="zoomValue" :min="zoomValue.min" :max="zoomValue.max"
-        :step="zoomValue.step">
-      @change="onChangeZoom()" :step="zoomValue.step">
+        :step="zoomValue.step" @change="onChangeZoom()">
       <div class="alert alert-light" role="alert">
         <span style="font-weight: 600;">¿Problemas al escanear?</span>
         Intenta con otra cámara.
