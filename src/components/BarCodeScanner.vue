@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onBeforeMount, onMounted, ref } from "vue";
 import Loader from "./Loader.vue"
 import Quagga from '@ericblade/quagga2';
 
@@ -24,122 +24,97 @@ const loading = ref(true)
 const selectedCamera = ref("")
 
 
-const onChange = async () => {
-  console.log('The new value is: ', selectedCamera.value)
-  await Quagga.stop()
-  loading.value = true
-  await start({
-    deviceId: selectedCamera.value
-  })
-  loading.value = false
-}
-
-
-function pruneText(text) {
-  return text.length > 30 ? text.substr(0, 30) : text;
-}
-
-const initCameraSelector = (devices) => {
-  var $deviceSelection = document.getElementById("deviceSelection");
-  while ($deviceSelection.firstChild) {
-    $deviceSelection.removeChild($deviceSelection.firstChild);
+const enumerateDevices = async () => {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const cameras = devices.filter(device => device.kind === 'videoinput');
+    console.log('IDs de cámaras disponibles:', cameras.map(camera => camera.deviceId));
+    return
+  } catch (error) {
+    console.error('Error al enumerar dispositivos', error);
   }
-  devices.forEach(function (device) {
-    var $option = document.createElement("option");
-    $option.value = device.deviceId || device.id;
-    $option.appendChild(document.createTextNode(pruneText(device.label || device.deviceId || device.id)));
-    $deviceSelection.appendChild($option);
+};
+
+onMounted(() => {
+  start()
+})
+
+
+const start = () => {
+  Quagga.init({
+    inputStream: {
+      name: "Live",
+      type: "LiveStream",
+      target: document.querySelector('#videoWindow'),
+      constraints: {
+        width: 640,
+        height: 480,
+        facingMode: "environment",
+      },
+    },
+    decoder: {
+      readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "code_39_vin_reader", "codabar_reader", "upc_reader", "upc_e_reader", "i2of5_reader"]
+    },
+  }, (err) => {
+    if (err) {
+      console.log(err);
+      return
+    }
+    console.log("Initialization finished. Ready to start");
+    Quagga.start();
+    loading.value = false
+    detecting()
+
   });
 }
 
-const DeviceDefaultCamera = async () => {
-  var defaultDeviceId = null
-  // Si es android seleccionamos la camara camera2 0 por defecto
-  const devices = await Quagga.CameraAccess.enumerateVideoDevices();
-  devices.forEach(function (device) {
-    console.log("test getDefaultCamera: " + device.label)
-    if (navigator.userAgent.match(/Android/i)) {
-      if (device.label.includes("camera2 0")) {
-        console.log("Cambiando camara por defecto" + device.deviceId)
-        defaultDeviceId = device.deviceId
+const selector = () => {
+  Quagga.onProcessed((result) => {
+    var drawingCtx = Quagga.canvas.ctx.overlay,
+      drawingCanvas = Quagga.canvas.dom.overlay;
+
+    if (result) {
+      if (result.boxes) {
+        drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
+        result.boxes.filter(function (box) {
+          return box !== result.box;
+        }).forEach(function (box) {
+          Quagga.ImageDebug.drawPath(box, {
+            x: 0,
+            y: 1
+          }, drawingCtx, {
+            color: "green",
+            lineWidth: 2
+          });
+        });
+      }
+
+      if (result.box) {
+        Quagga.ImageDebug.drawPath(result.box, {
+          x: 0,
+          y: 1
+        }, drawingCtx, {
+          color: "#00F",
+          lineWidth: 2
+        });
+      }
+
+      if (result.codeResult && result.codeResult.code) {
+        Quagga.ImageDebug.drawPath(result.line, {
+          x: 'x',
+          y: 'y'
+        }, drawingCtx, {
+          color: 'red',
+          lineWidth: 3
+        });
       }
     }
   });
-  if (navigator.userAgent.match(/Android/i)) {
-    initCameraSelector(devices)
-  }
-  return defaultDeviceId
-}
-
-
-onMounted(async () => {
-  const defaultDeviceId = navigator.userAgent.match(/Android/i) ? await DeviceDefaultCamera() : null
-  const constraints = defaultDeviceId ? { deviceId: defaultDeviceId } : {}
-  await start(constraints)
-  detecting()
-})
-
-const selectDefaultCamera = async () => {
-  const activeStreamLabel = Quagga.CameraAccess.getActiveStreamLabel();
-  console.log("Camara activa: " + activeStreamLabel)
-  const devices = await Quagga.CameraAccess.enumerateVideoDevices()
-  devices.forEach(function (device) {
-    if (device.label === activeStreamLabel) {
-      let defaultDeviceId = device.deviceId;
-      selectedCamera.value = defaultDeviceId
-      console.log("El deviceId por defecto es:", defaultDeviceId);
-    }
-  });
-}
-
-const start = async (constraints) => {
-  const config = {
-    locate: true,
-    inputStream: {
-      type: "LiveStream",
-      target: document.querySelector("#videoWindow"),
-      constraints: constraints
-    },
-    locator: {
-      patchSize: "medium",
-      halfSample: true
-    },
-    numOfWorkers: 2,
-    frequency: 10,
-    decoder: {
-      readers: [{
-        format: "code_128_reader",
-        config: {}
-      }]
-    },
-    decoder: {
-      readers: ["ean_reader"],
-      multiple: true
-    },
-    locator: {
-      halfSample: true,
-      patchSize: "medium"
-    }
-  };
-
-  await Quagga.init(config, err => {
-    if (err) {
-      console.log(err);
-      return;
-    }
-    console.log("initialization complete");
-    loading.value = false
-    Quagga.start()
-    if (navigator.userAgent.match(/Android/i)) {
-      selectDefaultCamera()
-    }
-
-
-  })
 }
 
 const detecting = () => {
   Quagga.onDetected((data) => {
+    selector()
     console.log(data);
     const foundResult = data[0];
     const barcode = foundResult.codeResult.code
