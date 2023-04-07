@@ -79,8 +79,22 @@ const start = (constraints) => {
     detecting()
     if (selectedCamera.value == "") {
       addSelectOptions()
+      selectDefaultCamera()
     }
   })
+}
+
+const selectDefaultCamera = async () => {
+  const activeStreamLabel = Quagga.CameraAccess.getActiveStreamLabel();
+  console.log("Camara activa: " + activeStreamLabel)
+  const devices = await Quagga.CameraAccess.enumerateVideoDevices()
+  devices.forEach(function (device) {
+    if (device.label === activeStreamLabel) {
+      let defaultDeviceId = device.deviceId;
+      selectedCamera.value = defaultDeviceId
+      console.log("El deviceId por defecto es:", defaultDeviceId);
+    }
+  });
 }
 
 
