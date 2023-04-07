@@ -11,12 +11,16 @@
     <div v-show="isAndroid" style="margin:10px 0">
       <!-- <input v-if="hasZoomCap" type="range" v-model="actualZoomValue" :min="zoomValue.min" :max="zoomValue.max"
         :step="zoomValue.step" @change="changeZoom()"> -->
-      <div class="zoom-buttons-container">
-        <button class="zoom" @click="onChangeZoomTest('down')" :disabled="actualZoomValue <= zoomValue.min">-</button>
-        <button class="zoom" @click="onChangeZoomTest('up')" :disabled="actualZoomValue >= zoomValue.max">+</button>
-        <select v-model="selectedCamera" @change="onChange()">
-          <option v-for="option in options" :value="option.value">{{ option.label }}</option>
-        </select>
+      <div class="options-container">
+        <div v-show="hasZoomCap" class="zoom-buttons-container">
+          <button class="zoom" @click="onChangeZoomTest('down')" :disabled="actualZoomValue <= zoomValue.min">-</button>
+          <button class="zoom" @click="onChangeZoomTest('up')" :disabled="actualZoomValue >= zoomValue.max">+</button>
+        </div>
+        <div class="select-container">
+          <select v-model="selectedCamera" @change="onChange()">
+            <option v-for="option in options" :value="option.value">{{ option.label }}</option>
+          </select>
+        </div>
       </div>
     </div>
   </div>
@@ -240,10 +244,17 @@ input[type="range"]::-webkit-slider-thumb {
   transition: background .3s ease-in-out;
 }
 
-.zoom-buttons-container {
+.options-container {
   display: flex;
   grid-column-gap: 10px;
   margin: 10px 0;
+  justify-content: space-between;
+
+}
+
+.zoom-buttons-container {
+  display: flex;
+  column-gap: 20px;
 }
 
 .zoom {
