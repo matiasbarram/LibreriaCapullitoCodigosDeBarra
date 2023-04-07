@@ -49,7 +49,7 @@ const onChangeZoom = async () => {
   const track = Quagga.CameraAccess.getActiveTrack();
   await track.applyConstraints({
     advanced: [{
-      zoom: zoomValue.value
+      zoom: actualZoomValue.value
     }]
   });
 }
