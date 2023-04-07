@@ -33,6 +33,8 @@ const onChange = () => {
       exact: deviceId
     }
   }
+  // save deviceId on localStorage
+  localStorage.setItem("deviceId", deviceId)
   Quagga.stop();
   start(constraints)
 }
@@ -42,6 +44,7 @@ onMounted(() => {
   start({
     focusMode: "continuous",
     facingMode: "environment",
+    deviceId: localStorage.getItem("deviceId")
   })
 })
 
