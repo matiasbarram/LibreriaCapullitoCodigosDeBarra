@@ -31,7 +31,6 @@ const options = ref([])
 const onChange = () => {
   const deviceId = selectedCamera.value
   const constraints = {
-    focusMode: "continuous",
     deviceId: {
       exact: deviceId
     }
@@ -44,7 +43,6 @@ const onChange = () => {
 
 onMounted(() => {
   start({
-    focusMode: "continuous",
     deviceId: localStorage.getItem("deviceId")
   })
 })
@@ -139,6 +137,7 @@ const checkCapabilities = () => {
   if (!('zoom' in capabilities)) {
     return Promise.reject('Zoom is not supported by ' + track.label);
   }
+  console.log(JSON.stringify(capabilities, null, 2));
 }
 
 </script>
