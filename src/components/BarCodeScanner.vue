@@ -8,8 +8,12 @@
     </div>
     <div id="videoWindow" class="video"></div>
     <div v-show="isAndroid" style="margin:10px 0">
-      <input v-if="hasZoomCap" type="range" v-model="actualZoomValue" :min="zoomValue.min" :max="zoomValue.max"
-        :step="zoomValue.step" @change="onChangeZoom()">
+      <!-- <input v-if="hasZoomCap" type="range" v-model="actualZoomValue" :min="zoomValue.min" :max="zoomValue.max"
+        :step="zoomValue.step" @change="changeZoom()"> -->
+      <div class="zoom-buttons-container">
+        <button class="zoom" @click="onChangeZoomTest('down')" :disabled="actualZoomValue === zoomValue.min">-</button>
+        <button class="zoom" @click="onChangeZoomTest('up')" :disabled="actualZoomValue === zoomValue.max">+</button>
+      </div>
       <div class="alert alert-light" role="alert">
         <span style="font-weight: 600;">¿Problemas al escanear?</span>
         Intenta con otra cámara.
@@ -45,7 +49,22 @@ const onChange = async () => {
   start(constraints)
 }
 
-const onChangeZoom = async () => {
+const onChangeZoomTest = (direction) => {
+  if (direction == "up" && actualZoomValue.value < zoomValue.value.max) {
+    actualZoomValue.value = actualZoomValue.value + zoomValue.value.step
+    changeZoom()
+
+
+  } else if (direction == "down" && actualZoomValue.value > zoomValue.value.min) {
+    actualZoomValue.value = actualZoomValue.value - zoomValue.value.step
+    changeZoom()
+  }
+  actualZoomValue.value = parseFloat(actualZoomValue.value.toFixed(1))
+  console.log("type" + typeof actualZoomValue.value)
+  console.log("Zoom value" + actualZoomValue.value)
+}
+
+const changeZoom = async () => {
   const track = Quagga.CameraAccess.getActiveTrack();
   await track.applyConstraints({
     advanced: [{
@@ -219,5 +238,29 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: ew-resize;
   box-shadow: 0 0 2px 0 #555;
   transition: background .3s ease-in-out;
+}
+
+.zoom-buttons-container {
+  display: flex;
+  grid-column-gap: 10px;
+  margin: 10px 0;
+}
+
+.zoom {
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  background-color: #0c5460;
+  color: #fff;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.zoom:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
