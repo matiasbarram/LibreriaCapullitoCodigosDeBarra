@@ -8,7 +8,7 @@
     </div>
     <div id="videoWindow" class="video"></div>
     <div v-show="isAndroid" style="margin:10px 0">
-      <input v-if="hasZoomCap" type="range" v-model="zoomValue" :min="zoomValue.min" :max="zoomValue.max"
+      <input v-if="hasZoomCap" type="range" v-model="actualZoomValue" :min="zoomValue.min" :max="zoomValue.max"
         :step="zoomValue.step" @change="onChangeZoom()">
       <div class="alert alert-light" role="alert">
         <span style="font-weight: 600;">¿Problemas al escanear?</span>
@@ -26,7 +26,8 @@ import Quagga from '@ericblade/quagga2';
 const emit = defineEmits(['emitData'])
 const loading = ref(true)
 const isAndroid = ref(false)
-const hasZoomCap = ref(true)
+const hasZoomCap = ref(false)
+const actualZoomValue = ref(0)
 const zoomValue = ref({})
 const selectedCamera = ref("")
 const options = ref([])
@@ -155,8 +156,8 @@ const checkCapabilities = () => {
     min: capabilities.zoom.min,
     max: capabilities.zoom.max,
     step: capabilities.zoom.step,
-    value: track.getSettings().zoom
   }
+  actualZoomValue.value = capabilities.zoom.min
   console.log("Zoom capabilities: ", capabilities.zoom);
   console.log(JSON.stringify(capabilities, null, 2));
 }
