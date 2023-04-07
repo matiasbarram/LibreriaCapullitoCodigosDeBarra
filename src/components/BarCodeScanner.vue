@@ -8,6 +8,8 @@
     </div>
     <div id="videoWindow" class="video"></div>
     <div v-show="isAndroid" style="margin:10px 0">
+      <input v-if="hasZoomCap" type="range" v-model="zoomValue" :min="zoomValue.min" :max="zoomValue.max"
+        :step="zoomValue.step">
       <div class="alert alert-light" role="alert">
         <span style="font-weight: 600;">¿Problemas al escanear?</span>
         Intenta con otra cámara.
@@ -24,11 +26,13 @@ import Quagga from '@ericblade/quagga2';
 const emit = defineEmits(['emitData'])
 const loading = ref(true)
 const isAndroid = ref(false)
+const hasZoomCap = ref(false)
+const zoomValue = ref({})
 const selectedCamera = ref("")
 const options = ref([])
 
 
-const onChange = () => {
+const onChange = async () => {
   const deviceId = selectedCamera.value
   const constraints = {
     deviceId: {
@@ -36,7 +40,7 @@ const onChange = () => {
     }
   }
   localStorage.setItem("deviceId", deviceId)
-  Quagga.stop();
+  await Quagga.stop();
   start(constraints)
 }
 
@@ -137,6 +141,14 @@ const checkCapabilities = () => {
   if (!('zoom' in capabilities)) {
     return Promise.reject('Zoom is not supported by ' + track.label);
   }
+  hasZoomCap.value = true
+  zoomValue.value = {
+    min: capabilities.zoom.min,
+    max: capabilities.zoom.max,
+    step: capabilities.zoom.step,
+    value: track.getSettings().zoom
+  }
+  console.log("Zoom capabilities: ", capabilities.zoom);
   console.log(JSON.stringify(capabilities, null, 2));
 }
 
