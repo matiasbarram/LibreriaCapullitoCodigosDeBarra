@@ -2,21 +2,21 @@
   <Loader v-if="loading" />
   <div v-show="!loading">
     <div v-show="isAndroid" style="margin:10px 0">
-      <select v-model="selectedCamera" @change="onChange()">
-        <option v-for="option in options" :value="option.value">{{ option.label }}</option>
-      </select>
+      <div class="alert alert-light" role="alert">
+        <span style="font-weight: 600;">¿Problemas al escanear?</span>
+        Intenta con otra cámara.
+      </div>
     </div>
     <div id="videoWindow" class="video"></div>
     <div v-show="isAndroid" style="margin:10px 0">
       <!-- <input v-if="hasZoomCap" type="range" v-model="actualZoomValue" :min="zoomValue.min" :max="zoomValue.max"
         :step="zoomValue.step" @change="changeZoom()"> -->
       <div class="zoom-buttons-container">
-        <button class="zoom" @click="onChangeZoomTest('down')" :disabled="actualZoomValue === zoomValue.min">-</button>
-        <button class="zoom" @click="onChangeZoomTest('up')" :disabled="actualZoomValue === zoomValue.max">+</button>
-      </div>
-      <div class="alert alert-light" role="alert">
-        <span style="font-weight: 600;">¿Problemas al escanear?</span>
-        Intenta con otra cámara.
+        <button class="zoom" @click="onChangeZoomTest('down')" :disabled="actualZoomValue <= zoomValue.min">-</button>
+        <button class="zoom" @click="onChangeZoomTest('up')" :disabled="actualZoomValue >= zoomValue.max">+</button>
+        <select v-model="selectedCamera" @change="onChange()">
+          <option v-for="option in options" :value="option.value">{{ option.label }}</option>
+        </select>
       </div>
     </div>
   </div>
