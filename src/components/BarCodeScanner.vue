@@ -2,7 +2,7 @@
   <Loader v-if="loading" />
   <div v-show="!loading">
     <div id="videoWindow" class="video"></div>
-    <div v-show="selectedCamera" style="margin:10px 0">
+    <div v-show="isAndroid" style="margin:10px 0">
       <div class="alert alert-light" role="alert">
         <span style="font-weight: 600;">¿Problemas al escanear?</span>
         Intenta con otra cámara.
@@ -21,6 +21,7 @@ import Quagga from '@ericblade/quagga2';
 
 const emit = defineEmits(['emitData'])
 const loading = ref(true)
+const isAndroid = ref(false)
 const selectedCamera = ref("")
 const options = ref([])
 
@@ -78,8 +79,11 @@ const start = (constraints) => {
     loading.value = false
     detecting()
     if (selectedCamera.value == "") {
-      addSelectOptions()
-      selectDefaultCamera()
+      if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/Windows/i)) {
+        isAndroid.value = true
+        addSelectOptions()
+        selectDefaultCamera()
+      }
     }
   })
 }
