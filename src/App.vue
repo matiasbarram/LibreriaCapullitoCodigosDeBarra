@@ -28,7 +28,7 @@ const loadData = (scannedBarCode) => {
 <style scoped>
 .main-section {
   text-align: center;
-  padding: 40px 20px;
+  padding: 10px 20px;
 }
 
 .main-section-title {
