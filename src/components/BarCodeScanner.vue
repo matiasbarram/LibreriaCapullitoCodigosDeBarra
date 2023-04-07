@@ -7,56 +7,68 @@
         <span style="font-weight: 600;">¿Problemas al escanear?</span>
         Intenta con otra cámara.
       </div>
-      <select name="input-stream_constraints" id="deviceSelection" v-model="selectedCamera" @change="onChange()"
-        @blur="isOpen = false" @keydown.enter="isOpen = false">
+      <select v-model="selectedCamera" @change="onChange()">
+        <option v-for="option in options" :value="option.value">{{ option.label }}</option>
       </select>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onBeforeMount, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import Loader from "./Loader.vue"
 import Quagga from '@ericblade/quagga2';
 
 const emit = defineEmits(['emitData'])
 const loading = ref(true)
 const selectedCamera = ref("")
+const options = ref([])
 
 
-const enumerateDevices = async () => {
-  try {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const cameras = devices.filter(device => device.kind === 'videoinput');
-    console.log('IDs de cámaras disponibles:', cameras.map(camera => camera.deviceId));
-    return
-  } catch (error) {
-    console.error('Error al enumerar dispositivos', error);
+const onChange = () => {
+  const deviceId = selectedCamera.value
+  const constraints = {
+    deviceId: {
+      exact: deviceId
+    }
   }
-};
+  Quagga.stop();
+  start(constraints)
+}
+
 
 onMounted(() => {
-  start()
+  start({
+    focusMode: "continuous",
+    facingMode: "environment",
+  })
 })
 
 
-const start = () => {
-  Quagga.init({
+const start = (constraints) => {
+  const config = {
+    locate: true,
     inputStream: {
-      name: "Live",
       type: "LiveStream",
-      target: document.querySelector('#videoWindow'),
-      constraints: {
-        focusMode: "manual",
-        width: 640,
-        height: 480,
-        facingMode: "environment",
-      },
+      target: document.querySelector("#videoWindow"),
+      constraints: constraints
     },
+    locator: {
+      patchSize: "medium",
+      halfSample: true
+    },
+    numOfWorkers: 2,
+    frequency: 10,
     decoder: {
-      readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "code_39_vin_reader", "codabar_reader", "upc_reader", "upc_e_reader", "i2of5_reader"]
+      readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "code_39_vin_reader", "codabar_reader", "upc_reader", "upc_e_reader", "i2of5_reader"],
+      multiple: true
     },
-  }, (err) => {
+    locator: {
+      halfSample: true,
+      patchSize: "medium"
+    }
+  };
+  Quagga.init(config, (err) => {
     if (err) {
       console.log(err);
       return
@@ -65,51 +77,25 @@ const start = () => {
     Quagga.start();
     loading.value = false
     detecting()
-
-  });
+    if (selectedCamera.value == "") {
+      addSelectOptions()
+    }
+  })
 }
 
-const selector = () => {
-  Quagga.onProcessed((result) => {
-    var drawingCtx = Quagga.canvas.ctx.overlay,
-      drawingCanvas = Quagga.canvas.dom.overlay;
 
-    if (result) {
-      if (result.boxes) {
-        drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
-        result.boxes.filter(function (box) {
-          return box !== result.box;
-        }).forEach(function (box) {
-          Quagga.ImageDebug.drawPath(box, {
-            x: 0,
-            y: 1
-          }, drawingCtx, {
-            color: "green",
-            lineWidth: 2
-          });
-        });
+const addSelectOptions = () => {
+  navigator.mediaDevices.enumerateDevices().then((devices) => {
+    devices.forEach((device) => {
+      if (device.kind === 'videoinput') {
+        const option = {}
+        option.value = device.deviceId;
+        option.label = device.label;
+        console.log(option)
+        options.value.push(option)
       }
-
-      if (result.box) {
-        Quagga.ImageDebug.drawPath(result.box, {
-          x: 0,
-          y: 1
-        }, drawingCtx, {
-          color: "#00F",
-          lineWidth: 2
-        });
-      }
-
-      if (result.codeResult && result.codeResult.code) {
-        Quagga.ImageDebug.drawPath(result.line, {
-          x: 'x',
-          y: 'y'
-        }, drawingCtx, {
-          color: 'red',
-          lineWidth: 3
-        });
-      }
-    }
+    });
+    selectedCamera.value = Quagga.CameraAccess.getActiveStreamLabel()
   });
 }
 
