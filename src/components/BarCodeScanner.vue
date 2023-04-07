@@ -47,6 +47,7 @@ const start = () => {
       type: "LiveStream",
       target: document.querySelector('#videoWindow'),
       constraints: {
+        focusMode: "manual",
         width: 640,
         height: 480,
         facingMode: "environment",
@@ -114,7 +115,6 @@ const selector = () => {
 
 const detecting = () => {
   Quagga.onDetected((data) => {
-    selector()
     console.log(data);
     const foundResult = data[0];
     const barcode = foundResult.codeResult.code
