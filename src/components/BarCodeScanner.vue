@@ -26,7 +26,7 @@ import Quagga from '@ericblade/quagga2';
 const emit = defineEmits(['emitData'])
 const loading = ref(true)
 const isAndroid = ref(false)
-const hasZoomCap = ref(false)
+const hasZoomCap = ref(true)
 const zoomValue = ref({})
 const selectedCamera = ref("")
 const options = ref([])
@@ -183,7 +183,6 @@ select {
 
 
 .alert {
-  position: relative;
   text-align: left;
   padding: 0.75rem 1.25rem;
   margin-bottom: 1rem;
@@ -195,5 +194,29 @@ select {
   color: #0c5460;
   background-color: #d1ecf1;
   border-color: #bee5eb;
+}
+
+input[type="range"] {
+  margin: 18px 0;
+  -webkit-appearance: none;
+  margin-right: 15px;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 5px;
+  background-image: linear-gradient(#4e939f, #4e939f);
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #0c5460;
+  cursor: ew-resize;
+  box-shadow: 0 0 2px 0 #555;
+  transition: background .3s ease-in-out;
 }
 </style>
