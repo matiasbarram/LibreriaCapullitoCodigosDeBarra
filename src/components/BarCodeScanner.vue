@@ -339,4 +339,8 @@ input[type="range"]::-webkit-slider-thumb {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.bi-lightning {
+  color: #ffc107;
+}
 </style>
