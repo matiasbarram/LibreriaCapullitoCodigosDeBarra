@@ -6,19 +6,19 @@
         <span style="font-weight: 600;">¿Problemas al escanear?</span>
         Intenta con otra cámara.
       </div>
+      <div v-show="hasTorchCap">
+        <button class="torch" @click="onChangeTorchTest()" :disabled="!torchOn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-lightning"
+            viewBox="0 0 16 16">
+            <path
+              d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5zM6.374 1 4.168 8.5H7.5a.5.5 0 0 1 .478.647L6.78 13.04 11.478 7H8a.5.5 0 0 1-.474-.658L9.306 1H6.374z" />
+          </svg>
+        </button>
+      </div>
     </div>
     <div id="videoWindow" class="video"></div>
     <div v-show="isAndroid" style="margin:10px 0">
       <div class="options-container">
-        <div v-show="hasTorchCap">
-          <button class="torch" @click="onChangeTorchTest()" :disabled="!torchOn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning"
-              viewBox="0 0 16 16">
-              <path
-                d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5zM6.374 1 4.168 8.5H7.5a.5.5 0 0 1 .478.647L6.78 13.04 11.478 7H8a.5.5 0 0 1-.474-.658L9.306 1H6.374z" />
-            </svg>
-          </button>
-        </div>
         <div v-show="hasZoomCap" class="zoom-buttons-container">
           <button class="zoom" @click="onChangeZoomTest('down')" :disabled="actualZoomValue <= zoomValue.min">-</button>
           <button class="zoom" @click="onChangeZoomTest('up')" :disabled="actualZoomValue >= zoomValue.max">+</button>
