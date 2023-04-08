@@ -9,8 +9,6 @@
     </div>
     <div id="videoWindow" class="video"></div>
     <div v-show="isAndroid" style="margin:10px 0">
-      <!-- <input v-if="hasZoomCap" type="range" v-model="actualZoomValue" :min="zoomValue.min" :max="zoomValue.max"
-        :step="zoomValue.step" @change="changeZoom()"> -->
       <div class="options-container">
         <div v-show="hasTorchCap">
           <button class="torch" @click="onChangeTorchTest()" :disabled="!torchOn">
@@ -109,6 +107,7 @@ const onChangeZoomTest = (direction) => {
 
 const onChangeTorchTest = () => {
   torchOn.value = !torchOn.value
+  console.log("Torch value" + torchOn.value)
   changeCapabilities({
     advanced: [{
       torch: torchOn.value
@@ -246,7 +245,7 @@ const checkTorchCapability = () => {
     return Promise.reject('Torch is not supported by ' + track.label);
   }
   hasTorchCap.value = true
-  console.log("torch capabilities: ", capabilities.zoom);
+  console.log("torch capabilities: ", capabilities.torch);
 }
 
 </script>
