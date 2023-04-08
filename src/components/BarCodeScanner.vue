@@ -12,6 +12,15 @@
       <!-- <input v-if="hasZoomCap" type="range" v-model="actualZoomValue" :min="zoomValue.min" :max="zoomValue.max"
         :step="zoomValue.step" @change="changeZoom()"> -->
       <div class="options-container">
+        <div v-show="hasTorchCap">
+          <button class="torch" @click="onChangeTorchTest()" :disabled="!torchOn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning"
+              viewBox="0 0 16 16">
+              <path
+                d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5zM6.374 1 4.168 8.5H7.5a.5.5 0 0 1 .478.647L6.78 13.04 11.478 7H8a.5.5 0 0 1-.474-.658L9.306 1H6.374z" />
+            </svg>
+          </button>
+        </div>
         <div v-show="hasZoomCap" class="zoom-buttons-container">
           <button class="zoom" @click="onChangeZoomTest('down')" :disabled="actualZoomValue <= zoomValue.min">-</button>
           <button class="zoom" @click="onChangeZoomTest('up')" :disabled="actualZoomValue >= zoomValue.max">+</button>
@@ -35,6 +44,8 @@ const emit = defineEmits(['emitData'])
 const loading = ref(true)
 const isAndroid = ref(false)
 const hasZoomCap = ref(false)
+const hasTorchCap = ref(false)
+const torchOn = ref(false)
 const actualZoomValue = ref(0)
 const zoomValue = ref({})
 const selectedCamera = ref("")
@@ -81,25 +92,33 @@ const onChange = async () => {
 const onChangeZoomTest = (direction) => {
   if (direction == "up" && actualZoomValue.value < zoomValue.value.max) {
     actualZoomValue.value = actualZoomValue.value + zoomValue.value.step
-    changeZoom()
 
 
   } else if (direction == "down" && actualZoomValue.value > zoomValue.value.min) {
     actualZoomValue.value = actualZoomValue.value - zoomValue.value.step
-    changeZoom()
   }
+  changeCapabilities({
+    advanced: [{
+      zoom: actualZoomValue.value
+    }]
+  })
   actualZoomValue.value = parseFloat(actualZoomValue.value.toFixed(1))
   console.log("type" + typeof actualZoomValue.value)
   console.log("Zoom value" + actualZoomValue.value)
 }
 
-const changeZoom = async () => {
-  const track = Quagga.CameraAccess.getActiveTrack();
-  await track.applyConstraints({
+const onChangeTorchTest = () => {
+  torchOn.value = !torchOn.value
+  changeCapabilities({
     advanced: [{
-      zoom: actualZoomValue.value
+      torch: torchOn.value
     }]
-  });
+  })
+}
+
+const changeCapabilities = async (props) => {
+  const track = Quagga.CameraAccess.getActiveTrack();
+  await track.applyConstraints(props);
 }
 
 
@@ -125,7 +144,11 @@ const start = (constraints) => {
     numOfWorkers: navigator.hardwareConcurrency,
     frequency: 10,
     decoder: {
-      readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "code_39_vin_reader", "codabar_reader", "upc_reader", "upc_e_reader", "i2of5_reader"],
+      readers: ["ean_reader", "ean_8_reader",
+        "code_128_reader", "code_39_reader",
+        "code_39_vin_reader", "codabar_reader",
+        "upc_reader", "upc_e_reader",
+        "i2of5_reader"],
       multiple: true
     },
   };
@@ -138,7 +161,8 @@ const start = (constraints) => {
     Quagga.start();
     loading.value = false
     detecting()
-    checkCapabilities()
+    checkZoomCapability()
+    checkTorchCapability()
     if (selectedCamera.value == "") {
       if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/Windows/i)) {
         isAndroid.value = true
@@ -192,7 +216,7 @@ const detecting = () => {
 }
 
 
-const checkCapabilities = () => {
+const checkZoomCapability = () => {
   var track = Quagga.CameraAccess.getActiveTrack();
   var capabilities = {};
   if (typeof track.getCapabilities === 'function') {
@@ -210,6 +234,19 @@ const checkCapabilities = () => {
   actualZoomValue.value = capabilities.zoom.min
   console.log("Zoom capabilities: ", capabilities.zoom);
   console.log(JSON.stringify(capabilities, null, 2));
+}
+
+const checkTorchCapability = () => {
+  var track = Quagga.CameraAccess.getActiveTrack();
+  var capabilities = {};
+  if (typeof track.getCapabilities === 'function') {
+    capabilities = track.getCapabilities();
+  }
+  if (!('torch' in capabilities)) {
+    return Promise.reject('Torch is not supported by ' + track.label);
+  }
+  hasTorchCap.value = true
+  console.log("torch capabilities: ", capabilities.zoom);
 }
 
 </script>
