@@ -14,7 +14,7 @@
 
             <template v-else>
                 <h2>Probando el modal </h2>
-                <p class="product-info"> El codigo es: {{ dataFromApi }} </p>
+                <p class="product-info"> El codigo es: {{ productData }} </p>
             </template>
         </div>
     </div>
@@ -23,9 +23,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 import Loader from './Loader.vue'
-import { onClickOutside } from '@vueuse/core'
 
-const target = ref(null)
 const dataFromApi = ref(null)
 
 const emit = defineEmits(['close'])
@@ -48,6 +46,7 @@ const fetchDataFromApi = async () => {
         console.error(error);
     }
 }
+
 const closeModal = () => {
     emit('close');
 }
