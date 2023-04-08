@@ -40,6 +40,31 @@ const zoomValue = ref({})
 const selectedCamera = ref("")
 const options = ref([])
 
+const checkAndroidCamera20 = async () => {
+  const deviceId = localStorage.getItem("deviceId")
+  if (deviceId) {
+    console.log("deviceId", deviceId)
+    return
+  }
+  const defaultDeviceLabel = Quagga.CameraAccess.getActiveStreamLabel()
+  console.log("defaultDevice", defaultDeviceLabel)
+  if (defaultDeviceLabel.includes("camera2 0")) {
+    return
+  }
+
+  const devices = await Quagga.CameraAccess.enumerateVideoDevices()
+  const camera20 = devices.find((device) => device.label.includes("camera2 0"))
+  if (camera20) {
+    console.log("camera20", camera20.label)
+    selectedCamera.value = camera20.deviceId
+    localStorage.setItem("deviceId", camera20.deviceId)
+    await Quagga.stop();
+    start({
+      deviceId: camera20.deviceId
+    })
+  }
+}
+
 
 const onChange = async () => {
   const deviceId = selectedCamera.value
@@ -113,12 +138,14 @@ const start = (constraints) => {
     Quagga.start();
     loading.value = false
     detecting()
-    checkCapabilities() // test
+    checkCapabilities()
     if (selectedCamera.value == "") {
       if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/Windows/i)) {
         isAndroid.value = true
-        addSelectOptions()
-        selectDefaultCamera()
+        checkAndroidCamera20().then(() => {
+          addSelectOptions()
+          selectDefaultCamera()
+        })
       }
     }
   })
