@@ -119,8 +119,8 @@ const start = (constraints) => {
       constraints: constraints
     },
     locator: {
-      patchSize: "small",
-      halfSample: true
+      patchSize: "medium",
+      halfSample: false
     },
     numOfWorkers: navigator.hardwareConcurrency,
     frequency: 10,
