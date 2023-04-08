@@ -14,7 +14,7 @@
 
             <template v-else>
                 <h2>Probando el modal </h2>
-                <p class="product-info"> El codigo es: {{ productData }} </p>
+                <p class="product-info"> El codigo es: {{ codigo }} </p>
             </template>
         </div>
     </div>
