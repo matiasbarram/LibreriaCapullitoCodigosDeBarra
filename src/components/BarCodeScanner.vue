@@ -139,18 +139,14 @@ const start = (constraints) => {
       constraints: constraints
     },
     locator: {
-      patchSize: "medium",
-      halfSample: false
+      patchSize: "large",
+      halfSample: true
     },
     numOfWorkers: navigator.hardwareConcurrency,
     frequency: 10,
     decoder: {
-      readers: ["ean_reader", "ean_8_reader",
-        "code_128_reader", "code_39_reader",
-        "code_39_vin_reader", "codabar_reader",
-        "upc_reader", "upc_e_reader",
-        "i2of5_reader"],
-      multiple: true
+      readers: ["ean_reader"],
+      multiple: false
     },
   };
   Quagga.init(config, (err) => {
@@ -207,15 +203,29 @@ const addSelectOptions = () => {
 
 const detecting = () => {
   Quagga.onDetected((data) => {
-    console.log(data);
-    const foundResult = data[0];
-    const barcode = foundResult.codeResult.code
-    Quagga.stop();
-    console.log("Found: " + barcode)
-    emit("emitData", barcode);
+    var err = 0
+    var countDecodedCodes = 0
+    const results = data.codeResult.decodedCodes
+    results.forEach((code) => {
+      if (code.error != null) {
+        err = err + code.error
+      }
+      countDecodedCodes = countDecodedCodes + 1
+    })
+
+    const totalError = err / countDecodedCodes
+    console.log("Total error: " + totalError)
+    if (totalError < 0.1) {
+      const barcode = data.codeResult.code
+      Quagga.stop();
+      console.log("Found: ", data)
+      emit("emitData", barcode);
+    } else {
+      console.log("Error: ", err / countDecodedCodes)
+    }
+
   });
 }
-
 
 const checkZoomCapability = () => {
   var track = Quagga.CameraAccess.getActiveTrack();
