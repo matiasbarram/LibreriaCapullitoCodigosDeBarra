@@ -201,21 +201,23 @@ const addSelectOptions = () => {
   });
 }
 
+const getMedian = (arr) => {
+  arr.sort((a, b) => a - b);
+  const half = Math.floor(arr.length / 2);
+  if (arr.length % 2 === 1) // Odd length
+    return arr[half];
+  return (arr[half - 1] + arr[half]) / 2.0;
+}
+
 const detecting = () => {
   Quagga.onDetected((data) => {
-    var err = 0
-    var countDecodedCodes = 0
-    const results = data.codeResult.decodedCodes
-    results.forEach((code) => {
-      if (code.error != null) {
-        err = err + code.error
-      }
-      countDecodedCodes = countDecodedCodes + 1
-    })
+    const errors = data.codeResult.decodedCodes
+      .filter(_ => _.error !== undefined)
+      .map(_ => _.error);
+    const err = getMedian(errors);
 
-    const totalError = err / countDecodedCodes
-    console.log("Total error: " + totalError)
-    if (totalError < 0.1) {
+    console.log("Total error: " + err)
+    if (err < 0.1) {
       const barcode = data.codeResult.code
       Quagga.stop();
       console.log("Found: ", data)
