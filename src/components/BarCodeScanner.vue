@@ -136,7 +136,12 @@ const start = (constraints) => {
     inputStream: {
       type: "LiveStream",
       target: document.querySelector("#videoWindow"),
-      constraints: constraints
+      constraints: {
+        aspectRatio: {
+          ideal: 1,
+        },
+        ...constraints
+      }
     },
     locator: {
       patchSize: "large",
