@@ -13,8 +13,7 @@
             </template>
 
             <template v-else>
-                <h2>Probando el modal </h2>
-                <p class="product-info"> El codigo es: {{ codigo }} </p>
+                <p class="product-info"> El codigo es: {{ dataFromApi }} </p>
             </template>
         </div>
     </div>
@@ -42,12 +41,6 @@ const fetchDataFromApi = async () => {
         //console.log(codigo.value)
         const response = await fetch(`https://libreriacapullito.cl/scaneo_backend.php?ean=4006381492416`, {
             method: 'GET',
-            headers: new Headers({
-                'Content-type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            }),
-            mode: 'cors',
-            cache: 'default'
         })
         const data = await response.json();
         dataFromApi.value = data;
