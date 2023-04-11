@@ -228,7 +228,7 @@ const detecting = () => {
       console.log("Found: ", data)
       emit("emitData", barcode);
     } else {
-      console.log("Error: ", err / countDecodedCodes)
+      console.log("Error: ", err)
     }
 
   });

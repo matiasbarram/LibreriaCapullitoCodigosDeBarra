@@ -33,13 +33,22 @@ const props = defineProps({
     productData: Object
 })
 
-onMounted(() => {
-    fetchDataFromApi()
+onMounted(async () => {
+    await fetchDataFromApi()
 })
 
 const fetchDataFromApi = async () => {
     try {
-        const response = await fetch('https://reqres.in/api/users?page=2');
+        //console.log(codigo.value)
+        const response = await fetch(`https://libreriacapullito.cl/scaneo_backend.php?ean=4006381492416`, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            }),
+            mode: 'cors',
+            cache: 'default'
+        })
         const data = await response.json();
         dataFromApi.value = data;
     } catch (error) {
