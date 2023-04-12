@@ -2,10 +2,7 @@
   <Loader v-if="loading" />
   <div v-show="!loading">
     <div v-show="isAndroid" style="margin:10px 0">
-      <div class="alert alert-light" role="alert">
-        <span style="font-weight: 600;">¿Problemas al escanear?</span>
-        Intenta con otra cámara.
-      </div>
+      <Alert message="¿Problemas al escanear?" subMessage="Intenta con otra cámara." />
     </div>
     <div id="videoWindow" class="video"></div>
     <div v-show="isAndroid" style="margin:10px 0">
@@ -38,6 +35,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import Loader from "./Loader.vue"
+import Alert from "./Alert.vue"
 import Quagga from '@ericblade/quagga2';
 
 const emit = defineEmits(['emitData'])

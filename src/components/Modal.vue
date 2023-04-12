@@ -14,11 +14,17 @@
             </template>
 
             <template v-else-if="!isLoading && hasError" class="product_container">
-                <h2>{{ errorMessage.message }}</h2>
-                <p>{{ errorMessage.hint }}</p>
+                <div class="error-container">
+                    <div>
+                        <h2 class="error_title">{{ errorMessage.message }}</h2>
+                        <h3 class="error_subtitle">{{ errorMessage.hint }}</h3>
+                    </div>
+                    <Alert message="Código producto:" :sub-message=codigo />
+                </div>
+
             </template>
 
-            <template v-else>
+            <template v-else class="product">
                 <div class="product_container">
                     <img class="product_image" :src="`https://www.libreriacapullito.cl/${apiRespose.imagen}`"
                         :alt="apiRespose.nombre">
@@ -40,6 +46,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import Loader from './Loader.vue'
+import Alert from './Alert.vue';
 
 const apiRespose = ref({})
 const isLoading = ref(true)
@@ -79,8 +86,8 @@ const fetchDataFromApi = async () => {
     } catch (error) {
         errorMessage.value = {
             error: true,
-            message: 'El producto que buscas no existe',
-            hint: "Puedes revisar el código"
+            message: 'Lo sentimos!',
+            hint: "No hemos encontrado el producto que buscas."
         };
         hasError.value = true;
     } finally {
@@ -143,19 +150,27 @@ const closeModal = () => {
     justify-content: flex-end;
 }
 
+.product {
+    position: relative;
+}
+
 .product_data {
     height: 95%;
     position: relative;
 }
 
-
-.product_name {
+.product_name,
+.error_title {
     font-size: 1.25rem;
     font-weight: bold;
     margin-bottom: 10px;
 }
 
-
+.error_subtitle {
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 10px;
+}
 
 .product_image {
     margin-bottom: 20px;
@@ -188,6 +203,14 @@ const closeModal = () => {
     /* center with css */
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.error-container {
+    height: 95%;
+    row-gap: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: right;
 }
 </style>
   
