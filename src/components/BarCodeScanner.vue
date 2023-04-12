@@ -247,7 +247,7 @@ const checkZoomCapability = () => {
     max: capabilities.zoom.max,
     step: capabilities.zoom.step,
   }
-  actualZoomValue.value = (capabilities.zoom.min) * 3
+  actualZoomValue.value = capabilities.zoom.min
   console.log("Zoom capabilities: ", capabilities.zoom);
   console.log(JSON.stringify(capabilities, null, 2));
 }
