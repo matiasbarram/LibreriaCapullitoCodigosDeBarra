@@ -35,7 +35,7 @@
                     <div class="product_price_container">
                         <p class="product_price">{{ formatPrice(apiRespose.precio) }}</p><span>IVA incluido.</span>
                     </div>
-                    <p v-if="apiRespose.oferta != 0" class="product_oferta">{{ apiRespose.precioOferta }}</p>
+                    <p v-if="apiRespose.oferta != 0" class="product_oferta">{{ formatPrice(apiRespose.precioOferta) }}</p>
                 </div>
                 <small class="product_code">Codigo de tienda: {{ apiRespose.codigoTienda }}</small>
             </template>
