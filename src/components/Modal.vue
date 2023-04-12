@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="close-action" @click="closeModal">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="close-icon">
-                    <path fill="#000" fill-rule="evenodd"
+                    <path fill="#17a2b8" fill-rule="evenodd"
                         d="M12 10.586L8.707 7.293a1 1 0 0 0-1.414 1.414L10.586 12l-3.293 3.293a1 1 0 1 0 1.414 1.414L12 13.414l3.293 3.293a1 1 0 1 0 1.414-1.414L13.414 12l3.293-3.293a1 1 0 0 0-1.414-1.414L12 10.586z" />
                 </svg>
             </div>
@@ -25,19 +25,23 @@
             </template>
 
             <template v-else class="product">
-                <div class="product_container">
-                    <img class="product_image" :src="`https://www.libreriacapullito.cl/${apiRespose.imagen}`"
-                        :alt="apiRespose.nombre">
-                    <h2 class="product_name">{{ apiRespose.nombre }}</h2>
-                    <p>{{ apiRespose.marca }}</p>
-                </div>
-                <div class="price_container">
-                    <div class="product_price_container">
-                        <p class="product_price">{{ formatPrice(apiRespose.precio) }}</p><span>IVA incluido.</span>
+                <div>
+                    <div class="product_container">
+                        <img class="product_image" :src="`https://www.libreriacapullito.cl/${apiRespose.imagen}`"
+                            :alt="apiRespose.nombre">
+                        <h2 class="product_name">{{ apiRespose.nombre }}</h2>
+                        <p>{{ apiRespose.marca }}</p>
                     </div>
-                    <p v-if="apiRespose.oferta != 0" class="product_oferta">{{ formatPrice(apiRespose.precioOferta) }}</p>
+                    <div class="price_container">
+                        <div class="product_price_container">
+                            <p class="product_price">{{ formatPrice(apiRespose.precio) }}</p><span>IVA incluido.</span>
+                        </div>
+                        <p v-if="apiRespose.oferta != 0" class="product_oferta">{{ formatPrice(apiRespose.precioOferta) }}
+                        </p>
+                    </div>
+                    <button class="btn btn-primary bottom-btn" @click="closeModal">Buscar otro producto</button>
+                    <!-- <small class="product_code">Codigo de tienda: {{ apiRespose.codigoTienda }}</small> -->
                 </div>
-                <small class="product_code">Codigo de tienda: {{ apiRespose.codigoTienda }}</small>
             </template>
         </div>
     </div>
@@ -135,6 +139,7 @@ const closeModal = () => {
 }
 
 .modal-content {
+    position: relative;
     height: 80%;
     width: 80%;
     background-color: #fff;
@@ -151,6 +156,7 @@ const closeModal = () => {
 }
 
 .product {
+    height: 100%;
     position: relative;
 }
 
@@ -186,6 +192,7 @@ const closeModal = () => {
 
 .product_price_container {
     display: flex;
+    margin-bottom: 10px;
     column-gap: 10px;
 }
 
@@ -214,10 +221,35 @@ const closeModal = () => {
 }
 
 .product_oferta {
-    color: black;
-    font-size: 25px;
-    font-weight: 600;
+    color: #000000c9;
+    font-size: 20px;
+    font-weight: 400;
     text-decoration: line-through;
+}
+
+.btn-primary {
+    display: inline-block;
+    background-color: #17a2b8;
+    color: #fff;
+    font-weight: 600;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #17a3b8d5;
+}
+
+.bottom-btn {
+    position: absolute;
+    bottom: 10px;
+    width: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 </style>
   
