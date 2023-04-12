@@ -212,5 +212,12 @@ const closeModal = () => {
     flex-direction: column;
     justify-content: right;
 }
+
+.product_oferta {
+    color: black;
+    font-size: 25px;
+    font-weight: 600;
+    text-decoration: line-through;
+}
 </style>
   
