@@ -180,6 +180,8 @@ const closeModal = () => {
 
 .product_image {
     margin-bottom: 20px;
+    max-height: 200px;
+    object-fit: contain;
 }
 
 .price_container {
@@ -232,7 +234,7 @@ const closeModal = () => {
     background-color: #17a2b8;
     color: #fff;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 14px;
     border: none;
     border-radius: 5px;
     padding: 12px 24px;
