@@ -5,7 +5,7 @@
       <Alert message="¿Problemas al escanear?" subMessage="Intenta con otra cámara." />
     </div>
     <div id="videoWindow" class="video"></div>
-    <div style="margin:10px 0">
+    <div v-show="isAndroid" style="margin:10px 0">
       <div class="options-container">
         <div v-show="hasTorchCap">
           <button class="torch" @click="onChangeTorchTest()">
@@ -22,7 +22,7 @@
           <button class="zoom" @click="onChangeZoomTest('down')" :disabled="actualZoomValue <= zoomValue.min">-</button>
           <button class="zoom" @click="onChangeZoomTest('up')" :disabled="actualZoomValue >= zoomValue.max">+</button>
         </div>
-        <div v-show="isAndroid" class="select-container">
+        <div class="select-container">
           <select v-model="selectedCamera" @change="onChange()">
             <option v-for="option in options" :value="option.value">{{ option.label }}</option>
           </select>
@@ -68,7 +68,9 @@ const checkAndroidCamera20 = async () => {
     selectedCamera.value = camera20.deviceId
     localStorage.setItem("deviceId", camera20.deviceId)
     await Quagga.stop();
-    start()
+    start({
+      deviceId: camera20.deviceId
+    })
   }
 }
 
@@ -120,7 +122,9 @@ const changeCapabilities = async (props) => {
 
 
 onMounted(() => {
-  start()
+  start({
+    deviceId: localStorage.getItem("deviceId")
+  })
 })
 
 
@@ -131,13 +135,11 @@ const start = (constraints) => {
       type: "LiveStream",
       target: document.querySelector("#videoWindow"),
       constraints: {
-        width: '1920',
-        height: '1080',
         aspectRatio: {
           ideal: 1,
         },
-        focusMode: 'continuous',
-      },
+        ...constraints
+      }
     },
     locator: {
       patchSize: "large",
@@ -161,15 +163,15 @@ const start = (constraints) => {
     detecting()
     checkZoomCapability()
     checkTorchCapability()
-    // if (selectedCamera.value == "") {
-    //   if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/Windows/i)) {
-    //     isAndroid.value = true
-    //     checkAndroidCamera20().then(() => {
-    //       addSelectOptions()
-    //       selectDefaultCamera()
-    //     })
-    //   }
-    // }
+    if (selectedCamera.value == "") {
+      if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/Windows/i)) {
+        isAndroid.value = true
+        checkAndroidCamera20().then(() => {
+          addSelectOptions()
+          selectDefaultCamera()
+        })
+      }
+    }
   })
 }
 
