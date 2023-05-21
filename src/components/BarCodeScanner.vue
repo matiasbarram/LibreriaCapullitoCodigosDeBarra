@@ -130,27 +130,31 @@ onMounted(() => {
 
 const start = (constraints) => {
   const config = {
-    locate: true,
     inputStream: {
-      type: "LiveStream",
-      target: document.querySelector("#videoWindow"),
-      constraints: {
-        aspectRatio: {
-          ideal: 1,
+        name: "Live",
+        type: "LiveStream",
+        target: document.querySelector("#videoWindow"),
+
+        constraints: {
+            width: {min: 640},
+            height: {min: 480},
+            facingMode: "environment",
+            aspectRatio: {min: 1, max: 2}
         },
-        ...constraints
-      }
+        area: { // defines rectangle of the detection/localization area
+            top: "0%",    // top offset
+            right: "0%",  // right offset
+            left: "0%",   // left offset
+            bottom: "0%"  // bottom offset
+        },
+        singleChannel: false // true: only the red color-channel is read
     },
-    locator: {
-      patchSize: "large",
-      halfSample: true
-    },
-    numOfWorkers: navigator.hardwareConcurrency,
     frequency: 10,
+    numOfWorkers: 4,
+    locate: true,
     decoder: {
-      readers: ["ean_reader"],
-      multiple: false
-    },
+        readers: ["code_128_reader"]
+    }
   };
   Quagga.init(config, (err) => {
     if (err) {
