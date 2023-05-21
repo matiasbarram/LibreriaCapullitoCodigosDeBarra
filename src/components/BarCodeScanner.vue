@@ -130,6 +130,7 @@ onMounted(() => {
 
 const createConstraints = (constraints) => {
   if (navigator.userAgent.match(/iPhone/i)) {
+    console.log("iPhone")
     return {
       inputStream: {
         name: "Live",
@@ -154,6 +155,7 @@ const createConstraints = (constraints) => {
     }
   }
   else{
+    console.log("Android or Other")
     return {
     locate: true,
     inputStream: {
@@ -183,7 +185,7 @@ const createConstraints = (constraints) => {
 
 const start = (constraints) => {
   const config = createConstraints(constraints)
-
+  console.log("Starting", config)
   Quagga.init(config, (err) => {
     if (err) {
       console.log(err);
