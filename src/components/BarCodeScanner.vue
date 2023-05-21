@@ -153,7 +153,7 @@ const start = (constraints) => {
     numOfWorkers: 4,
     locate: true,
     decoder: {
-        readers: ["code_128_reader"]
+        readers: ["ean_reader"]
     }
   };
   Quagga.init(config, (err) => {
