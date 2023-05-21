@@ -128,8 +128,33 @@ onMounted(() => {
 })
 
 
-const start = (constraints) => {
-  const config = {
+const createConstraints = (constraints) => {
+  if (navigator.userAgent.match(/iPhone/i)) {
+    return {
+      inputStream: {
+        name: "Live",
+        type: "LiveStream",
+        constraints: {
+          width: '1920',
+          height: '1080',
+          aspectRatio: {
+                min: 1,
+                max: 2,
+            },
+            focusMode: 'continuous',
+        },
+        frequency: 0.1,
+        numberOfWorkers: navigator.hardwareConcurrency,
+        target: document.querySelector('#barcodeScan')
+      },
+      locate: true,
+      decoder: {
+        readers: ["ean_reader"]
+      }
+    }
+  }
+  else{
+    return {
     locate: true,
     inputStream: {
       type: "LiveStream",
@@ -152,6 +177,13 @@ const start = (constraints) => {
       multiple: false
     },
   };
+  }
+  
+}
+
+const start = (constraints) => {
+  const config = createConstraints(constraints)
+
   Quagga.init(config, (err) => {
     if (err) {
       console.log(err);
