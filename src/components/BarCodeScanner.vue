@@ -52,7 +52,7 @@ const options = ref([])
 const checkAndroidCamera20 = async () => {
   const deviceId = localStorage.getItem("deviceId")
   if (deviceId) {
-    console.log("actual storage deviceId", deviceId)
+    console.log("deviceId", deviceId)
     return
   }
   const defaultDeviceLabel = Quagga.CameraAccess.getActiveStreamLabel()
@@ -76,10 +76,13 @@ const checkAndroidCamera20 = async () => {
 
 
 const onChange = async () => {
+  const deviceId = selectedCamera.value
   const constraints = {
-    deviceId: selectedCamera.value
+    deviceId: {
+      exact: deviceId
+    }
   }
-  localStorage.setItem("deviceId", selectedCamera.value)
+  localStorage.setItem("deviceId", deviceId)
   await Quagga.stop();
   start(constraints)
 }
@@ -126,38 +129,29 @@ onMounted(() => {
 
 
 const start = (constraints) => {
-  console.log("constraints", constraints)
   const config = {
-    inputStream: {
-        name: "Live",
-        type: "LiveStream",
-        target: document.querySelector("#videoWindow"),
-
-        constraints: {
-            width: {min: 640},
-            height: {min: 480},
-            facingMode: "environment",
-            aspectRatio: {min: 1, max: 2}
-        },
-        area: { 
-            top: "0%",    
-            right: "0%",  
-            left: "0%",
-            bottom: "0%"
-        },
-        singleChannel: false
-    },
-    frequency: 10,
-    numOfWorkers: 4,
     locate: true,
+    inputStream: {
+      type: "LiveStream",
+      target: document.querySelector("#videoWindow"),
+      constraints: {
+        aspectRatio: {
+          ideal: 1,
+        },
+        ...constraints
+      }
+    },
+    locator: {
+      patchSize: "large",
+      halfSample: true
+    },
+    numOfWorkers: navigator.hardwareConcurrency,
+    frequency: 10,
     decoder: {
-        readers: ["ean_reader"]
-    }
-  }
-  
-  if (constraints.deviceId) {
-    config.inputStream.constraints = constraints.deviceId
-  }
+      readers: ["ean_reader"],
+      multiple: false
+    },
+  };
   Quagga.init(config, (err) => {
     if (err) {
       console.log(err);
@@ -254,6 +248,8 @@ const checkZoomCapability = () => {
     step: capabilities.zoom.step,
   }
   actualZoomValue.value = capabilities.zoom.min
+  console.log("Zoom capabilities: ", capabilities.zoom);
+  console.log(JSON.stringify(capabilities, null, 2));
 }
 
 const checkTorchCapability = () => {
