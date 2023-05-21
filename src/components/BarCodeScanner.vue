@@ -22,11 +22,11 @@
           <button class="zoom" @click="onChangeZoomTest('down')" :disabled="actualZoomValue <= zoomValue.min">-</button>
           <button class="zoom" @click="onChangeZoomTest('up')" :disabled="actualZoomValue >= zoomValue.max">+</button>
         </div>
-        <!-- <div class="select-container">
+        <div class="select-container">
           <select v-model="selectedCamera" @change="onChange()">
             <option v-for="option in options" :value="option.value">{{ option.label }}</option>
           </select>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
@@ -157,6 +157,9 @@ const start = (constraints) => {
         readers: ["ean_reader"]
     }
   };
+  if (constraints.deviceId) {
+    config.inputStream.constraints = constraints.deviceId
+  }
   Quagga.init(config, (err) => {
     if (err) {
       console.log(err);
@@ -168,15 +171,15 @@ const start = (constraints) => {
     detecting()
     checkZoomCapability()
     checkTorchCapability()
-    // if (selectedCamera.value == "") {
-    //   if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/Windows/i)) {
-    //     isAndroid.value = true
-    //     checkAndroidCamera20().then(() => {
-    //       addSelectOptions()
-    //       selectDefaultCamera()
-    //     })
-    //   }
-    // }
+    if (selectedCamera.value == "") {
+      if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/Windows/i)) {
+        isAndroid.value = true
+        checkAndroidCamera20().then(() => {
+          addSelectOptions()
+          selectDefaultCamera()
+        })
+      }
+    }
   })
 }
 
