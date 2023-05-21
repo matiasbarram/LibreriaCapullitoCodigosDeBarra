@@ -62,9 +62,9 @@ const checkAndroidCamera20 = async () => {
   }
 
   const devices = await Quagga.CameraAccess.enumerateVideoDevices()
-  const camera20 = devices.find((device) => device.label.includes("camera2 1"))
+  const camera20 = devices.find((device) => device.label.includes("camera2 0"))
   if (camera20) {
-    console.log("camera2 1", camera20.label)
+    console.log("camera20", camera20.label)
     selectedCamera.value = camera20.deviceId
     localStorage.setItem("deviceId", camera20.deviceId)
     await Quagga.stop();
@@ -129,6 +129,7 @@ onMounted(() => {
 
 
 const start = (constraints) => {
+  console.log("constraints", constraints)
   const config = {
     inputStream: {
         name: "Live",
@@ -167,15 +168,15 @@ const start = (constraints) => {
     detecting()
     checkZoomCapability()
     checkTorchCapability()
-    if (selectedCamera.value == "") {
-      if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/Windows/i)) {
-        isAndroid.value = true
-        checkAndroidCamera20().then(() => {
-          addSelectOptions()
-          selectDefaultCamera()
-        })
-      }
-    }
+    // if (selectedCamera.value == "") {
+    //   if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/Windows/i)) {
+    //     isAndroid.value = true
+    //     checkAndroidCamera20().then(() => {
+    //       addSelectOptions()
+    //       selectDefaultCamera()
+    //     })
+    //   }
+    // }
   })
 }
 
