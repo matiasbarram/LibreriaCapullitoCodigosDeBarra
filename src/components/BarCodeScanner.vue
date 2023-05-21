@@ -22,11 +22,11 @@
           <button class="zoom" @click="onChangeZoomTest('down')" :disabled="actualZoomValue <= zoomValue.min">-</button>
           <button class="zoom" @click="onChangeZoomTest('up')" :disabled="actualZoomValue >= zoomValue.max">+</button>
         </div>
-        <div class="select-container">
+        <!-- <div class="select-container">
           <select v-model="selectedCamera" @change="onChange()">
             <option v-for="option in options" :value="option.value">{{ option.label }}</option>
           </select>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -62,9 +62,9 @@ const checkAndroidCamera20 = async () => {
   }
 
   const devices = await Quagga.CameraAccess.enumerateVideoDevices()
-  const camera20 = devices.find((device) => device.label.includes("camera2 0"))
+  const camera20 = devices.find((device) => device.label.includes("camera2 1"))
   if (camera20) {
-    console.log("camera20", camera20.label)
+    console.log("camera2 1", camera20.label)
     selectedCamera.value = camera20.deviceId
     localStorage.setItem("deviceId", camera20.deviceId)
     await Quagga.stop();
