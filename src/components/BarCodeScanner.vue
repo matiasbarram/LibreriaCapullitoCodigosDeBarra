@@ -52,7 +52,7 @@ const options = ref([])
 const checkAndroidCamera20 = async () => {
   const deviceId = localStorage.getItem("deviceId")
   if (deviceId) {
-    console.log("deviceId", deviceId)
+    console.log("actual storage deviceId", deviceId)
     return
   }
   const defaultDeviceLabel = Quagga.CameraAccess.getActiveStreamLabel()
@@ -76,13 +76,10 @@ const checkAndroidCamera20 = async () => {
 
 
 const onChange = async () => {
-  const deviceId = selectedCamera.value
   const constraints = {
-    deviceId: {
-      exact: deviceId
-    }
+    deviceId: selectedCamera.value
   }
-  localStorage.setItem("deviceId", deviceId)
+  localStorage.setItem("deviceId", selectedCamera.value)
   await Quagga.stop();
   start(constraints)
 }
@@ -142,13 +139,13 @@ const start = (constraints) => {
             facingMode: "environment",
             aspectRatio: {min: 1, max: 2}
         },
-        area: { // defines rectangle of the detection/localization area
-            top: "0%",    // top offset
-            right: "0%",  // right offset
-            left: "0%",   // left offset
-            bottom: "0%"  // bottom offset
+        area: { 
+            top: "0%",    
+            right: "0%",  
+            left: "0%",
+            bottom: "0%"
         },
-        singleChannel: false // true: only the red color-channel is read
+        singleChannel: false
     },
     frequency: 10,
     numOfWorkers: 4,
@@ -156,7 +153,8 @@ const start = (constraints) => {
     decoder: {
         readers: ["ean_reader"]
     }
-  };
+  }
+  
   if (constraints.deviceId) {
     config.inputStream.constraints = constraints.deviceId
   }
@@ -256,8 +254,6 @@ const checkZoomCapability = () => {
     step: capabilities.zoom.step,
   }
   actualZoomValue.value = capabilities.zoom.min
-  console.log("Zoom capabilities: ", capabilities.zoom);
-  console.log(JSON.stringify(capabilities, null, 2));
 }
 
 const checkTorchCapability = () => {
