@@ -136,17 +136,15 @@ const createConstraints = (constraints) => {
         name: "Live",
         type: "LiveStream",
         constraints: {
-          width: '1920',
-          height: '1080',
-          aspectRatio: {
-                min: 1,
-                max: 2,
-            },
-            focusMode: 'continuous',
+          video: {
+            aspectRatio: {
+              ideal: 1920 / 1080,
+            }
+          }
         },
         frequency: 0.1,
         numberOfWorkers: navigator.hardwareConcurrency,
-        target: document.querySelector('#barcodeScan')
+        target: document.querySelector('#videoWindow')
       },
       locate: true,
       decoder: {
@@ -154,33 +152,33 @@ const createConstraints = (constraints) => {
       }
     }
   }
-  else{
+  else {
     console.log("Android or Other")
     return {
-    locate: true,
-    inputStream: {
-      type: "LiveStream",
-      target: document.querySelector("#videoWindow"),
-      constraints: {
-        aspectRatio: {
-          ideal: 1,
-        },
-        ...constraints
-      }
-    },
-    locator: {
-      patchSize: "large",
-      halfSample: true
-    },
-    numOfWorkers: navigator.hardwareConcurrency,
-    frequency: 10,
-    decoder: {
-      readers: ["ean_reader"],
-      multiple: false
-    },
-  };
+      locate: true,
+      inputStream: {
+        type: "LiveStream",
+        target: document.querySelector("#videoWindow"),
+        constraints: {
+          aspectRatio: {
+            ideal: 1,
+          },
+          ...constraints
+        }
+      },
+      locator: {
+        patchSize: "large",
+        halfSample: true
+      },
+      numOfWorkers: navigator.hardwareConcurrency,
+      frequency: 10,
+      decoder: {
+        readers: ["ean_reader"],
+        multiple: false
+      },
+    };
   }
-  
+
 }
 
 const start = (constraints) => {
