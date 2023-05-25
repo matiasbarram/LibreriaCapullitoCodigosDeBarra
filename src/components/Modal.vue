@@ -20,6 +20,8 @@
                         <h3 class="error_subtitle">{{ errorMessage.hint }}</h3>
                     </div>
                     <Alert message="Código producto:" :sub-message=codigo />
+                    <button class="btn btn-primary bottom-btn" @click="closeModal">Buscar otro producto</button>
+
                 </div>
 
             </template>
@@ -40,7 +42,6 @@
                         </p>
                     </div>
                     <button class="btn btn-primary bottom-btn" @click="closeModal">Buscar otro producto</button>
-                    <!-- <small class="product_code">Codigo de tienda: {{ apiRespose.codigoTienda }}</small> -->
                 </div>
             </template>
         </div>
