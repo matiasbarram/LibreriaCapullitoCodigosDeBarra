@@ -143,7 +143,8 @@ const createConstraints = (constraints) => {
           }
         },
         frequency: 0.1,
-        patchSize: "small",
+        halfSample: true,
+        patchSize: "x-small",
         numberOfWorkers: navigator.hardwareConcurrency,
         target: document.querySelector('#videoWindow')
       },
