@@ -142,13 +142,13 @@ const createConstraints = (constraints) => {
             }
           }
         },
-        frequency: 0.1,
-        halfSample: true,
-        patchSize: "x-small",
-        numberOfWorkers: navigator.hardwareConcurrency,
         target: document.querySelector('#videoWindow')
       },
       locate: true,
+      frequency: 0.1,
+      halfSample: true,
+      patchSize: "x-small",
+      numberOfWorkers: navigator.hardwareConcurrency,
       decoder: {
         readers: ["ean_reader"]
       }
