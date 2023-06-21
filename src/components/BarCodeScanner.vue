@@ -131,7 +131,7 @@ onMounted(() => {
 const createConstraints = (constraints) => {
   if (navigator.userAgent.match(/iPhone/i)) {
     console.log("iPhone")
-    return {
+    data = {
       inputStream: {
         name: "Live",
         type: "LiveStream",
@@ -153,6 +153,8 @@ const createConstraints = (constraints) => {
         readers: ["ean_reader"]
       }
     }
+    console.log(data)
+    return data
   }
   else {
     console.log("Android or Other")
