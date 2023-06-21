@@ -137,7 +137,9 @@ const createConstraints = (constraints) => {
         constraints: {
           width: 640,
           height: 480,
-          facing: "environment" // or user
+          facing: "environment",
+          target: document.querySelector("#videoWindow"),
+
         }
       },
       locator: {
