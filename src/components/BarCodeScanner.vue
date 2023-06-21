@@ -147,6 +147,20 @@ const createConstraints = (constraints) => {
       locator: {
         halfSample: false,
         patchSize: "medium",
+        debug: {
+          showCanvas: false,
+          showPatches: false,
+          showFoundPatches: false,
+          showSkeleton: false,
+          showLabels: false,
+          showPatchLabels: false,
+          showRemainingPatchLabels: false,
+          boxFromPatches: {
+            showTransformed: false,
+            showTransformedBox: false,
+            showBB: false
+          }
+        },
       },
       locate: true,
       frequency: 0.1,
