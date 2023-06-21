@@ -145,8 +145,8 @@ const createConstraints = (constraints) => {
         target: document.querySelector('#videoWindow')
       },
       locator: {
-        halfSample: true,
-        patchSize: "small",
+        halfSample: false,
+        patchSize: "medium",
       },
       locate: true,
       frequency: 0.1,
