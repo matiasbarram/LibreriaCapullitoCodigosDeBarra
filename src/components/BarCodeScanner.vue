@@ -166,8 +166,15 @@ const createConstraints = (constraints) => {
       locate: true,
       numberOfWorkers: navigator.hardwareConcurrency,
       decoder: {
-        readers: ["ean_reader"]
-      }
+        readers: ["ean_reader"],
+        debug: {
+          drawBoundingBox: true,
+          showFrequency: true,
+          drawScanline: true,
+          showPattern: true
+        },
+      },
+      debug: true
     }
     console.log(JSON.stringify(data, null, 2));
     return data
