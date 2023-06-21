@@ -155,7 +155,7 @@ const createConstraints = (constraints) => {
         readers: ["ean_reader"]
       }
     }
-    console.log(data)
+    console.log(JSON.stringify(data, null, 2));
     return data
   }
   else {
