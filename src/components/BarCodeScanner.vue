@@ -174,7 +174,12 @@ const createConstraints = (constraints) => {
           showPattern: true
         },
       },
-      debug: true
+      debug: {
+        drawBoundingBox: true,
+        showFrequency: true,
+        drawScanline: true,
+        showPattern: true
+      },
     }
     console.log(JSON.stringify(data, null, 2));
     return data
