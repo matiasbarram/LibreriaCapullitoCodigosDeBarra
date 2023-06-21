@@ -134,11 +134,11 @@ const createConstraints = (constraints) => {
     const data = {
       inputStream: {
         type: "LiveStream",
+        target: document.querySelector("#videoWindow"),
         constraints: {
           width: 640,
           height: 480,
           facing: "environment",
-          target: document.querySelector("#videoWindow"),
 
         }
       },
