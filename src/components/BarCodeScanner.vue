@@ -133,50 +133,22 @@ const createConstraints = (constraints) => {
     console.log("iPhone")
     const data = {
       inputStream: {
-        name: "Live",
         type: "LiveStream",
         constraints: {
           width: 640,
           height: 480,
           facing: "environment" // or user
-        },
-        target: document.querySelector('#videoWindow')
-      },
-      locator: {
-        halfSample: true,
-        patchSize: "small",
-        debug: {
-          showCanvas: true,
-          showPatches: true,
-          showFoundPatches: true,
-          showSkeleton: true,
-          showLabels: true,
-          showPatchLabels: true,
-          showRemainingPatchLabels: true,
-          boxFromPatches: {
-            showTransformed: true,
-            showTransformedBox: true,
-            showBB: true
-          }
         }
       },
-      locate: true,
-      numberOfWorkers: 2,
+      locator: {
+        patchSize: "medium",
+        halfSample: true
+      },
+      numOfWorkers: 2,
       decoder: {
-        readers: ["ean_reader"],
-        debug: {
-          drawBoundingBox: true,
-          showFrequency: true,
-          drawScanline: true,
-          showPattern: true
-        },
+        readers: ["ean_reader"]
       },
-      debug: {
-        drawBoundingBox: true,
-        showFrequency: true,
-        drawScanline: true,
-        showPattern: true
-      },
+      locate: true
     }
     console.log(JSON.stringify(data, null, 2));
     return data
