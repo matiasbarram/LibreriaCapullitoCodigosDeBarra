@@ -131,7 +131,7 @@ onMounted(() => {
 const createConstraints = (constraints) => {
   if (navigator.userAgent.match(/iPhone/i)) {
     console.log("iPhone")
-    data = {
+    const data = {
       inputStream: {
         name: "Live",
         type: "LiveStream",
