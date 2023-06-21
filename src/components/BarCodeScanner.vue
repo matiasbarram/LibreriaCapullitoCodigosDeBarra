@@ -144,10 +144,12 @@ const createConstraints = (constraints) => {
         },
         target: document.querySelector('#videoWindow')
       },
+      locator: {
+        halfSample: true,
+        patchSize: "small",
+      },
       locate: true,
       frequency: 0.1,
-      halfSample: true,
-      patchSize: "x-small",
       numberOfWorkers: navigator.hardwareConcurrency,
       decoder: {
         readers: ["ean_reader"]
