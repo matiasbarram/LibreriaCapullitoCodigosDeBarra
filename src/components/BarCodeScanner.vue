@@ -135,6 +135,7 @@ const createConstraints = (constraints) => {
       inputStream: {
         name: "Live",
         type: "LiveStream",
+        facingMode: "environment",
         constraints: {
           video: {
             aspectRatio: {
@@ -145,8 +146,8 @@ const createConstraints = (constraints) => {
         target: document.querySelector('#videoWindow')
       },
       locator: {
-        halfSample: false,
-        patchSize: "medium",
+        halfSample: true,
+        patchSize: "small",
         debug: {
           showCanvas: false,
           showPatches: false,
@@ -160,10 +161,9 @@ const createConstraints = (constraints) => {
             showTransformedBox: false,
             showBB: false
           }
-        },
+        }
       },
       locate: true,
-      frequency: 0.1,
       numberOfWorkers: navigator.hardwareConcurrency,
       decoder: {
         readers: ["ean_reader"]
@@ -320,9 +320,9 @@ const checkTorchCapability = () => {
 </script>
 
 <style>
-canvas.drawingBuffer {
+/* canvas.drawingBuffer {
   display: none !important;
-}
+} */
 
 select {
   appearance: none;
