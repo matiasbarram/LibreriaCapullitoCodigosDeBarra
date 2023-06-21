@@ -135,13 +135,10 @@ const createConstraints = (constraints) => {
       inputStream: {
         name: "Live",
         type: "LiveStream",
-        facingMode: "environment",
         constraints: {
-          video: {
-            aspectRatio: {
-              ideal: 1920 / 1080,
-            }
-          }
+          width: 640,
+          height: 480,
+          facing: "environment" // or user
         },
         target: document.querySelector('#videoWindow')
       },
@@ -149,22 +146,22 @@ const createConstraints = (constraints) => {
         halfSample: true,
         patchSize: "small",
         debug: {
-          showCanvas: false,
-          showPatches: false,
-          showFoundPatches: false,
-          showSkeleton: false,
-          showLabels: false,
-          showPatchLabels: false,
-          showRemainingPatchLabels: false,
+          showCanvas: true,
+          showPatches: true,
+          showFoundPatches: true,
+          showSkeleton: true,
+          showLabels: true,
+          showPatchLabels: true,
+          showRemainingPatchLabels: true,
           boxFromPatches: {
-            showTransformed: false,
-            showTransformedBox: false,
-            showBB: false
+            showTransformed: true,
+            showTransformedBox: true,
+            showBB: true
           }
         }
       },
       locate: true,
-      numberOfWorkers: navigator.hardwareConcurrency,
+      numberOfWorkers: 2,
       decoder: {
         readers: ["ean_reader"],
         debug: {
