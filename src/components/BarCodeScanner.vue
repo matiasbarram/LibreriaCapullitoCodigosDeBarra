@@ -143,7 +143,7 @@ const createConstraints = (constraints) => {
         }
       },
       locator: {
-        patchSize: "small",
+        patchSize: "medium",
         halfSample: true
       },
       numOfWorkers: 2,
@@ -304,7 +304,9 @@ const checkTorchCapability = () => {
 
 <style>
 canvas.drawingBuffer {
-  display: none !important;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 select {
