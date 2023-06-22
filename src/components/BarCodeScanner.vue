@@ -143,7 +143,7 @@ const createConstraints = (constraints) => {
         }
       },
       locator: {
-        patchSize: "medium",
+        patchSize: "small",
         halfSample: true
       },
       numOfWorkers: 2,
